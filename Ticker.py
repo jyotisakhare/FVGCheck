@@ -50,7 +50,7 @@ def get_tickers(type):
                 "UTIAMC.NS", "VBL.NS", "VEDL.NS", "VGUARD.NS", "VRLLOG.NS", "VSTIND.NS", "WELCORP.NS", "WIPRO.NS",
                 "WONDERLA.NS", "ZOMATO.NS", "ZYDUSLIFE.NS"]
     elif type == "SINGLE":
-        return ["TRANSRAILL.NS"]
+        return ["BAJAJFINSV.NS"]
     elif type == "RAVI":
         return ["TRANSRAILL.NS", "SHAKTIPUMP.NS", "MOTILALOFS.NS", "E2E.NS", "EPACK.NS", "PNGJL.NS", "PCBL.NS",
                 "WAAREEENER.NS", "SAHASRA.NS", "TEJASNET.NS", "ORIENTTECH.NS", "KAYNES.NS", "IGIL.NS", "VMM.NS",
