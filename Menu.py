@@ -1,22 +1,5 @@
 from CheckStockHasFVG import analyze_stocks_daily_fvg, analyze_stocks_weekly_fvg
-from Ticker import get_tickers
-
-startDaily = "2025-01-01"
-endDaily = "2025-01-10"
-
-startHr = "2025-01-10"
-endHr = "2025-01-13"
-
-stockPriceThreashHold = 15000
-
-startW = "2024-12-17"
-endW = "2025-01-20"
-
-startM = "2024-10-01"
-endM = "2025-01-31"
-
-isGoodFVG = True
-tickerGroup = "MINE"
+from Ticker import *
 
 
 def switch_menu():
@@ -25,8 +8,9 @@ def switch_menu():
         print("1. Daily GFVG")
         print("2. Weekly GFVG")
         print("3. Montly GFVG")
-        print("4. Daily RFVG")
-        print("5. Weekly RFVG")
+        print("4. Bearish Daily RFVG")
+        print("5. Bearish Weekly RFVG")
+        print("6. Hourly bull FVG")
 
         choice = input("Enter your choice (1-5): ")
 
@@ -40,14 +24,22 @@ def switch_menu():
                                           trend="bull", startTime=startW, endTime=endW)
                 break
             case "3":
-                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1mo", checkGoodFVG=isGoodFVG,
+                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1mo", checkGoodFVG=False,
                                          trend="bull", startTime=startM, endTime=endM)
                 break
             case "4":
-                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1d", checkGoodFVG=isGoodFVG,
+                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1d", checkGoodFVG=False,
                                          trend="bear", startTime=startDaily, endTime=endDaily)
                 break
             case "5":
+                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1wk", checkGoodFVG=False,
+                                         trend="bear", startTime=startW, endTime=endW)
+                break
+            case "6":
+                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1h", checkGoodFVG=False,
+                                         trend="bull", startTime=startHr, endTime=endHr)
+                break
+            case "7":
                 print("Exiting the program. Goodbye!")
                 break
             case _:

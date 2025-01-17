@@ -14,11 +14,11 @@ class FVGData:
 
     def set_away_from52_week_high(self, diff):
         if diff is not None:
-            self.awayFrom52WeekHigh = diff
+            self.awayFrom52WeekHigh = diff * 100
 
     def set_institution_holding(self, holding):
         if holding is not None:
-            self.institution_holding = holding
+            self.institution_holding = holding * 100
 
     def get_name(self):
         return self.name
@@ -28,5 +28,7 @@ class FVGData:
 
     def print(self):
         # print(f"{self.name} count {self.count} Diff - {self.priceDiff} C - {self.isConsolidating} Br - {self.isBroken}")
-        print(
-            f"{self.name} count {self.count} C - {self.isConsolidating} Br - {self.isBroken} awayFromHigh - {int(self.awayFrom52WeekHigh)} FIIDIItionHolding - {int(self.institution_holding)} Diff - {int(self.priceDiff)}")
+        try:
+            print(f"{self.name} count {self.count} C - {self.isConsolidating} Br - {self.isBroken} awayFromHigh - {int(self.awayFrom52WeekHigh)} FIIDIItionHolding - {int(self.institution_holding)} Diff - {int(self.priceDiff)} %")
+        except Exception as e:
+            print(f"print {e}")

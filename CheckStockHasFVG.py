@@ -4,7 +4,7 @@ import yfinance as yf
 
 import AwayFrom52Week
 from FVGData import FVGData
-from Ticker import get_tickers
+from Ticker import *
 
 
 def check_good_bullish_fvg(data, ticker):
@@ -39,7 +39,10 @@ def check_good_bullish_fvg(data, ticker):
         in_consolidation_phase = ((i < (len(data) - 3)) and firstCandleHigh <= fourthCandleLow and
                                   thirdCandleLow >= fourthCandleLow)  # 4th is in between fvg area
 
-        distance = ((thirdCandleLow - firstCandleHigh + 1) / (secondCandleClose - secondCandleOpen)) / 100
+        gap = (thirdCandleLow - firstCandleHigh )
+        if gap == 0:
+            gap = 1
+        distance = (gap / (secondCandleClose - secondCandleOpen)) * 100
 
         # print(f"{distance} distance")
         # bullish_candle = data['Close'].values[i] > data['Open'].values[i]  # Bullish candle
@@ -60,8 +63,7 @@ def check_good_bullish_fvg(data, ticker):
             is_consolidating = True
             print(f"{ticker} is consolidating FVG {data.index[i + 1]}")
 
-        if (
-                distance > distanceThreshhold and firstCandleHighLessThanThirdCandleHigh and firstCandleHighLessThanThirdCandleLow
+        if (firstCandleHighLessThanThirdCandleHigh and firstCandleHighLessThanThirdCandleLow
                 and firstCandleHigh <= stockPrice and isGoodFVG):
             fvgData = FVGData(data.index[i + 1], ticker, broken, is_consolidating, distance)
             bullish_fvg.append(fvgData)
@@ -226,7 +228,7 @@ def analyze_stocks_daily_fvg(tickers1, time, checkGoodFVG, trend, startTime, end
 
     hourly_fvg = []
     if time == "1d":
-        hourly_fvg = analyze_stocks_daily_fvg(ticker_for_hrly_fvg, "1h", False, trend, startHr, endHr)
+        hourly_fvg = analyze_stocks_daily_fvg(ticker_for_hrly_fvg, "15m", False, trend, startHr, endHr)
 
     print(f"{time} fvg_stock_list")
     for fvg in fvg_stock_list:
@@ -267,25 +269,14 @@ def analyze_stocks_weekly_fvg(tickers1, checkGoodFVG, trend, startTime, endTime)
             # print(f"No Bullish FVGs detected for {ticker}.")
         # print("=" * 40)
 
-    daily_fvg = analyze_stocks_daily_fvg(wfvg_stock_list, "1d", True, trend, startDaily, endDaily)
-    ticker_for_hrly_fvg = []
-    for fvg in daily_fvg:
-        ticker_for_hrly_fvg.append(fvg.get_name())
+    analyze_stocks_daily_fvg(wfvg_stock_list, "1d", True, trend, startDaily, endDaily)
 
     print(f" WEEKLY fvg_stock_list")
     print(wfvg_stock_list)
 
 
-startDaily = "2025-01-01"
-endDaily = "2025-01-10"
-
-startHr = "2025-01-10"
-endHr = "2025-01-13"
-
 stockPriceThreashHold = 15000
 
-start = "2024-12-17"
-end = "2025-01-20"
 # analyze_stocks_weekly_fvg(get_tickers("ALL"), checkGoodFVG=True, trend="bull")
 
 # # Analyze the stocks
@@ -294,5 +285,5 @@ end = "2025-01-20"
 
 
 # brearish daily
-# analyze_stocks_daily_fvg(get_tickers("MINE"), "1q", checkGoodFVG=True,
+# analyze_stocks_daily_fvg(get_tickers("MINE"), "4h", checkGoodFVG=True,
 #                          trend="bull", startTime="2025-01-06", endTime="2025-01-13")

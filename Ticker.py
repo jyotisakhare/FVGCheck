@@ -1,3 +1,22 @@
+
+
+startDaily = "2025-01-10"
+endDaily = "2025-01-18"
+
+startHr = "2025-01-16"
+endHr = "2025-01-17"
+
+stockPriceThreashHold = 15000
+
+startW = "2024-12-23"
+endW = "2025-01-20"
+
+startM = "2024-10-01"
+endM = "2024-12-31"
+
+isGoodFVG = True
+tickerGroup = "ALL"
+
 def get_tickers(type):
     if type == "NIFTY100":
         return ["ADANIENT.NS", "ADANIPORTS.NS", "APOLLOHOSP.NS", "ASIANPAINT.NS", "AXISBANK.NS", "BAJAJ-AUTO.NS",
@@ -50,7 +69,7 @@ def get_tickers(type):
                 "UTIAMC.NS", "VBL.NS", "VEDL.NS", "VGUARD.NS", "VRLLOG.NS", "VSTIND.NS", "WELCORP.NS", "WIPRO.NS",
                 "WONDERLA.NS", "ZOMATO.NS", "ZYDUSLIFE.NS"]
     elif type == "SINGLE":
-        return ["BAJAJFINSV.NS"]
+        return ["INDHOTEL.NS"]
     elif type == "RAVI":
         return ["TRANSRAILL.NS", "SHAKTIPUMP.NS", "MOTILALOFS.NS", "E2E.NS", "EPACK.NS", "PNGJL.NS", "PCBL.NS",
                 "WAAREEENER.NS", "SAHASRA.NS", "TEJASNET.NS", "ORIENTTECH.NS", "KAYNES.NS", "IGIL.NS", "VMM.NS",
@@ -63,3 +82,5 @@ def get_tickers(type):
     return []
 
 print(get_tickers("SINGLE"))
+
+

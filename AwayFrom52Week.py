@@ -34,7 +34,7 @@ def percentage_difference_52_week_high(ticker_symbol):
             raise ValueError("Unable to retrieve stock data.")
 
         # Calculate percentage difference
-        percentage_difference = ((week_high_52 - current_price) / week_high_52)
+        percentage_difference = ((week_high_52 / current_price) - 1)
         held_percent_institutions = held_percent_institutions
         print(f"diff  {percentage_difference}  {held_percent_institutions}")
         return StockInfo(percentage_difference, held_percent_institutions)
