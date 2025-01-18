@@ -234,7 +234,7 @@ def analyze_stocks_daily_fvg(tickers1, time, checkGoodFVG, trend, startTime, end
     for fvg in fvg_stock_list:
         fvg.print()
 
-    print(f" hourly fvg_stock_list")
+    print(f" hourly/ 15 m fvg_stock_list")
     for fvg in hourly_fvg:
         fvg.print()
     return sorted_fvg
@@ -272,7 +272,8 @@ def analyze_stocks_weekly_fvg(tickers1, checkGoodFVG, trend, startTime, endTime)
     analyze_stocks_daily_fvg(wfvg_stock_list, "1d", True, trend, startDaily, endDaily)
 
     print(f" WEEKLY fvg_stock_list")
-    print(wfvg_stock_list)
+    for fvg in wfvg_stock_list:
+        print(fvg)
 
 
 stockPriceThreashHold = 15000

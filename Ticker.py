@@ -3,12 +3,12 @@
 startDaily = "2025-01-10"
 endDaily = "2025-01-18"
 
-startHr = "2025-01-16"
+startHr = "2025-01-17"
 endHr = "2025-01-17"
 
 stockPriceThreashHold = 15000
 
-startW = "2024-12-23"
+startW = "2024-12-09"
 endW = "2025-01-20"
 
 startM = "2024-10-01"
