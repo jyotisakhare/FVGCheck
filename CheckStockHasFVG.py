@@ -6,9 +6,12 @@ import AwayFrom52Week
 from FVGData import FVGData
 from Ticker import *
 
+breakaway = []
+
 
 def check_good_bullish_fvg(data, ticker):
     bullish_fvg = []
+
     # print(data)
     for i in range(0, len(data) - 2):
         # print(f"{data['High'].values[i]}")
@@ -67,6 +70,12 @@ def check_good_bullish_fvg(data, ticker):
                 and firstCandleHigh <= stockPrice and isGoodFVG):
             fvgData = FVGData(data.index[i + 1], ticker, broken, is_consolidating, distance)
             bullish_fvg.append(fvgData)
+        elif (firstCandleHighLessThanThirdCandleHigh and firstCandleHighLessThanThirdCandleLow
+                and firstCandleHigh <= stockPrice):
+            fvgData = FVGData(data.index[i + 1], ticker, broken, is_consolidating, distance)
+            breakaway.append(fvgData)
+
+
 
         # if bearish_candle and bullish_candle:
         #     # Check for a gap (Bullish FVG criteria)
@@ -229,6 +238,9 @@ def analyze_stocks_daily_fvg(tickers1, time, checkGoodFVG, trend, startTime, end
     hourly_fvg = []
     if time == "1d":
         hourly_fvg = analyze_stocks_daily_fvg(ticker_for_hrly_fvg, "15m", False, trend, startHr, endHr)
+        print(f" breakaway daily gaps fvg_stock_list")
+        for fvg in breakaway:
+            fvg.print()
 
     print(f"{time} fvg_stock_list")
     for fvg in fvg_stock_list:
@@ -237,6 +249,11 @@ def analyze_stocks_daily_fvg(tickers1, time, checkGoodFVG, trend, startTime, end
     print(f" hourly/ 15 m fvg_stock_list")
     for fvg in hourly_fvg:
         fvg.print()
+
+    print(f" breakaway {time} gaps fvg_stock_list")
+    for fvg in breakaway:
+        fvg.print()
+
     return sorted_fvg
 
 

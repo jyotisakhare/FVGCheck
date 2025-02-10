@@ -1,29 +1,19 @@
 Montly stocks check before Jan
 
-COFORGE.NS     M-BAG W-BAG created R-FVG on daily time frame. no signs of up move yet
 
-INDHOTEL.NS  M-BAG W-BAG created R-W-FVG and R_D_FVG
 
-KIRLOSBROS.NS  G-M-FVG third candle on montly has long rejection. has weekly and daily R-FVG no signs of up move yet.
+can buy on daily fvg dip and reverse
+COFORGE.NS count 0  - next week try buy
+PERSISTENT.NS
 
-MANINFRA.NS  M-BAG W-BAG
-PERSISTENT.NS no signs of up
+MANINFRA.NS  - check next week
 
+
+1mo fvg_stock_list
 
 Stocks with weekly FVG stocks to check
 WEEKLY fvg_stock_list
 ['BAJAJFINSV.NS', 'BAJFINANCE.NS', 'COROMANDEL.NS', 'DMART.NS', 'EICHERMOT.NS', 'FSL.NS', 'MUTHOOTFIN.NS', 'NAVINFLUOR.NS', 'SUNPHARMA.NS', 'MANGCHEFER.NS', 'BAJFINANCE.NS', 'BAJAJFINSV.NS', 'EICHERMOT.NS', 'MARUTI.NS', 'SUNPHARMA.NS', 'CHOLAFIN.NS', 'DMART.NS', 'GODREJCP.NS', 'TRANSRAILL.NS', 'PIGL.NS']
-
-
-tomorrow
-
-COROMANDEL
-recently bought
-MAZDOCK
-MOTILALOFS -
-NTPC
-EQUITASBNK
-BHARTIART
 
 
 NEXT WEEK stocks
@@ -33,3 +23,44 @@ COROMANDEL
 DMART
 bajaj
 EICHERMOT
+MUTHOOTFIN
+
+
+Sharpturn on montlhy sceen stocks
+
+NTCP
+bajaj finance
+SBIN
+MOTILALOFS
+MOTHERSON
+
+
+1d fvg_stock_list
+APOLLOTYRE.NS count 1 C - False Br - False awayFromHigh - 35 FIIDIItionHolding - 37 Diff - -91 %
+AVANTIFEED.NS count 1 C - True Br - False awayFromHigh - 8 FIIDIItionHolding - 8 Diff - 22 %
+AXISBANK.NS count 1 C - True Br - False awayFromHigh - 66 FIIDIItionHolding - 34 Diff - 117 %
+BAJAJ-AUTO.NS count 1 C - False Br - False awayFromHigh - 14 FIIDIItionHolding - 39 Diff - 55 %
+BAJFINANCE.NS count 1 C - False Br - False awayFromHigh - 25 FIIDIItionHolding - 3 Diff - 7 %
+BRIGADE.NS count 1 C - False Br - False awayFromHigh - 38 FIIDIItionHolding - 24 Diff - 90 %
+
+CASTROLIND.NS count 1 C - False Br - False awayFromHigh - 20 FIIDIItionHolding - 60 Diff - 32 %
+COROMANDEL.NS count 1 C - False Br - False awayFromHigh - 25 FIIDIItionHolding - 10 Diff - 11 %
+EMAMILTD.NS count 1 C - False Br - False awayFromHigh - 28 FIIDIItionHolding - 37 Diff - 16 %
+EXIDEIND.NS count 1 C - False Br - False awayFromHigh - 22 FIIDIItionHolding - 62 Diff - 57 %
+GABRIEL.NS count 1 C - False Br - False awayFromHigh - 14 FIIDIItionHolding - 25 Diff - 55 %
+GOLDBEES.NS count 1 C - False Br - False awayFromHigh - 0 FIIDIItionHolding - 0 Diff - -6 %
+    HDFCBANK.NS count 1 C - False Br - False awayFromHigh - 53 FIIDIItionHolding - 11 Diff - 107 %
+HGINFRA.NS count 1 C - False Br - False awayFromHigh - 15 FIIDIItionHolding - 45 Diff - 29 %
+IEX.NS count 1 C - False Br - False awayFromHigh - 35 FIIDIItionHolding - 45 Diff - 30 %
+IKS.NS count 1 C - False Br - False awayFromHigh - 0 FIIDIItionHolding - 27 Diff - 52 %
+JKIL.NS count 1 C - False Br - False awayFromHigh - 14 FIIDIItionHolding - 29 Diff - 2 %
+LTIM.NS count 1 C - False Br - False awayFromHigh - 16 FIIDIItionHolding - 14 Diff - 42 %
+M&M.NS count 2 C - False Br - False awayFromHigh - 53 FIIDIItionHolding - 5 Diff - 26 %
+MANINFRA.NS count 1 C - False Br - False awayFromHigh - 2 FIIDIItionHolding - 29 Diff - 5 %
+MARKSANS.NS count 1 C - False Br - False awayFromHigh - 17 FIIDIItionHolding - 45 Diff - 63 %
+OLECTRA.NS count 1 C - False Br - False awayFromHigh - 3 FIIDIItionHolding - 52 Diff - 104 %
+PCBL.NS count 1 C - False Br - False awayFromHigh - 55 FIIDIItionHolding - 50 Diff - 19 %
+PNCINFRA.NS count 1 C - False Br - False awayFromHigh - 31 FIIDIItionHolding - 88 Diff - 2 %
+
+TIMETECHNO.NS count 1 C - False Br - False awayFromHigh - 16 FIIDIItionHolding - 32 Diff - 35 %
+ZOMATO.NS count 1 C - True Br - False awayFromHigh - 42 FIIDIItionHolding - 28 Diff - 45 %

@@ -22,7 +22,7 @@ def percentage_difference_52_week_high(ticker_symbol):
         # Fetch stock data
         stock = yf.Ticker(ticker_symbol)
         stock_info = stock.info
-        # print(stock_info)
+        print(stock_info)
 
         # Extract the 52-week high and current price
         week_high_52 = stock_info.get('fiftyTwoWeekHigh')

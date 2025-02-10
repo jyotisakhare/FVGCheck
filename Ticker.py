@@ -1,21 +1,21 @@
 
 
-startDaily = "2025-01-10"
-endDaily = "2025-01-18"
+startDaily = "2025-02-03"
+endDaily = "2025-02-06"
 
-startHr = "2025-01-17"
-endHr = "2025-01-17"
+startHr = "2025-02-05"
+endHr = "2025-02-06"
 
 stockPriceThreashHold = 15000
 
-startW = "2024-12-09"
-endW = "2025-01-20"
+startW = "2024-12-30"
+endW = "2025-02-01"
 
-startM = "2024-10-01"
-endM = "2024-12-31"
+startM = "2024-11-01"
+endM = "2025-01-31"
 
 isGoodFVG = True
-tickerGroup = "ALL"
+tickerGroup = "MINE"
 
 def get_tickers(type):
     if type == "NIFTY100":
@@ -68,6 +68,33 @@ def get_tickers(type):
                 "TCS.NS", "TIMETECHNO.NS", "TIPSMUSIC.NS", "TITAN.NS", "TRENT.NS", "TRIDENT.NS", "TRITURBINE.NS",
                 "UTIAMC.NS", "VBL.NS", "VEDL.NS", "VGUARD.NS", "VRLLOG.NS", "VSTIND.NS", "WELCORP.NS", "WIPRO.NS",
                 "WONDERLA.NS", "ZOMATO.NS", "ZYDUSLIFE.NS"]
+    elif type == "FAV":
+        return [ "AFFLE.NS",  "ASIANPAINT.NS", "AXISBANK.NS",
+                "BAJAJFINSV.NS", "BAJAJHFL.NS", "BAJFINANCE.NS",  "BHARTIARTL.NS", "BLUESTARCO.NS",
+               "BSOFT.NS", "CDSL.NS", "COALINDIA.NS", "COFORGE.NS", "COLPAL.NS", "DATAPATTNS.NS","DLF.NS",
+                "DMART.NS", "DRREDDY.NS", "EICHERMOT.NS", "EQUITASBNK.NS",
+                "EXIDEIND.NS", "HAL.NS", "HAPPSTMNDS.NS","HDFCBANK.NS",
+                 "HINDUNILVR.NS",  "ICICIBANK.NS", "IDFCFIRSTB.NS", "IEX.NS",
+                 "INDHOTEL.NS", "INDIAMART.NS", "INDIGO.NS", "INFY.NS", "IRFC.NS", "ITC.NS",
+               "JIOFIN.NS",  "KOTAKBANK.NS",
+                "KPITTECH.NS", "LTF.NS",
+                "M&M.NS", "MAHSEAMLES.NS", "MAPMYINDIA.NS", "MARICO.NS",
+                "MAZDOCK.NS",  "MINDACORP.NS", "MON100.NS",
+                "MOTHERSON.NS", "MOTILALOFS.NS", "MPHASIS.NS", "MRPL.NS", "MSUMI.NS", "MTARTECH.NS", "MUTHOOTFIN.NS",
+               "NAVINFLUOR.NS", "NEWGEN.NS",
+               "OLECTRA.NS",
+                "ONGC.NS", "PCBL.NS","PFC.NS", "PNBHOUSING.NS",
+                "PNCINFRA.NS", "PNGJL.NS", "POWERGRID.NS", "REDINGTON.NS", "RELIANCE.NS",
+                "RVNL.NS", "SBIN.NS", "SETFNIF50.NS",
+                "SUZLON.NS", "TATACOMM.NS", "TATAMOTORS.NS", "TATAPOWER.NS", "TATASTEEL.NS", "TATATECH.NS",
+                "TCS.NS", "TIMETECHNO.NS",  "TITAN.NS", "TRENT.NS", "TRIDENT.NS", "TRITURBINE.NS",
+                "VBL.NS", "VEDL.NS", "VRLLOG.NS", "WIPRO.NS",
+                "WONDERLA.NS", "ZOMATO.NS", "ZYDUSLIFE.NS"
+                 # "policy bazar",
+                 # "Delhivery",
+                 # APL Apollo Tubes,
+                 # Max Financial Services:
+                 ]
     elif type == "SINGLE":
         return ["INDHOTEL.NS"]
     elif type == "RAVI":

@@ -8,6 +8,16 @@ class FVGData:
         self.priceDiff = priceDiff
         self.count = 0
         self.awayFrom52WeekHigh = 0
+        # higher number higher the priority.
+        self.rank = 0
+
+    def __init__(self, name, rank):
+        self.institution_holding = 0
+        self.name = name
+        self.count = 0
+        self.awayFrom52WeekHigh = 0
+        # higher number higher the priority.
+        self.rank = rank
 
     def set_count(self, count):
         self.count = count
@@ -23,8 +33,20 @@ class FVGData:
     def get_name(self):
         return self.name
 
+    def get_rank(self):
+        return self.rank
+
+    def increment_rank(self):
+        self.rank = self.rank + 1
+
     def printName(self):
         print(f"\"{self.name}\"")
+
+    def printNameAndRank(self):
+        print(f"\"{self.name}\"  \"{self.rank}\"")
+
+    def sort(self):
+        return self.rank
 
     def print(self):
         # print(f"{self.name} count {self.count} Diff - {self.priceDiff} C - {self.isConsolidating} Br - {self.isBroken}")
