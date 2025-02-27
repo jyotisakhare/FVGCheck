@@ -81,7 +81,8 @@ def get_breakout_stocks(stock_list, lookback=50, volume_multiplier=1.5, rsi_thre
             # print("here4")
             # if price_breakout.any() & volume_spike.any():
             #     breakout_stocks.append(ticker)
-            fvg = FVGData(ticker, 0)
+            fvg = FVGData("", ticker, False, False, 0)
+            fvg.update_rank(ticker, 0)
             # print("here5")
             if price_breakout.any():
                 print("price_breakout", ticker)

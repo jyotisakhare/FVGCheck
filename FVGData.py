@@ -11,7 +11,7 @@ class FVGData:
         # higher number higher the priority.
         self.rank = 0
 
-    def __init__(self, name, rank):
+    def update_rank(self, name, rank):
         self.institution_holding = 0
         self.name = name
         self.count = 0
