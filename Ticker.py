@@ -1,15 +1,15 @@
 
 
-startDaily = "2025-02-16"
-endDaily = "2025-02-27"
+startDaily = "2025-03-01"
+endDaily = "2025-03-06"
 
-startHr = "2025-02-25"
-endHr = "2025-02-27"
+startHr = "2025-03-05"
+endHr = "2025-03-06"
 
 stockPriceThreashHold = 15000
 
-startW = "2025-01-15"
-endW = "2025-02-27"
+startW = "2025-02-01"
+endW = "2025-03-04"
 
 startM = "2024-11-01"
 endM = "2025-02-25"

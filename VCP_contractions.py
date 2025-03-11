@@ -10,7 +10,7 @@ def get_vcp_contractions(stock_symbols):
     for symbol in stock_symbols:
         stock = yf.Ticker(symbol)
         # print(f"checking {symbol}")
-        data = stock.history(period="1mo", interval="1d")  # Fetch last 12 weeks of data
+        data = stock.history(period="3mo", interval="1d")  # Fetch last 12 weeks of data
         # print(data)
         if len(data) < 3:
             print(f"Not enough data for {symbol}")
