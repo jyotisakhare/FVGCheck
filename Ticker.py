@@ -1,18 +1,22 @@
+from datetime import datetime, timedelta
+
+# Get the current date and time
+current_datetime = datetime.now()
 
 
-startDaily = "2025-03-01"
-endDaily = "2025-03-06"
+startDaily = (current_datetime - timedelta(days=5)).strftime('%Y-%m-%d')
+endDaily = current_datetime.strftime('%Y-%m-%d')
 
-startHr = "2025-03-05"
-endHr = "2025-03-06"
+startHr = (current_datetime - timedelta(days=2)).strftime('%Y-%m-%d')
+endHr = (current_datetime - timedelta(days=0)).strftime('%Y-%m-%d')
 
 stockPriceThreashHold = 15000
 
-startW = "2025-02-01"
-endW = "2025-03-04"
+startW = (current_datetime - timedelta(days=35)).strftime('%Y-%m-%d')
+endW = (current_datetime - timedelta(days=0)).strftime('%Y-%m-%d')
 
-startM = "2024-11-01"
-endM = "2025-02-25"
+startM = (current_datetime - timedelta(days=120)).strftime('%Y-%m-%d')
+endM = (current_datetime - timedelta(days=0)).strftime('%Y-%m-%d')
 
 isGoodFVG = True
 tickerGroup = "MINE"
@@ -109,5 +113,11 @@ def get_tickers(type):
     return []
 
 print(get_tickers("SINGLE"))
+
+
+
+print(f"Current date and time: {startDaily}")
+print(f"Yesterday's date and time: {startM}")
+
 
 
