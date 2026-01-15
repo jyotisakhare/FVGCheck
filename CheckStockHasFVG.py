@@ -34,7 +34,8 @@ def check_good_bullish_fvg(data, ticker):
         # Check for a bearish candle followed by a bullish candle
         firstCandleHighLessThanThirdCandleLow = firstCandleHigh < thirdCandleLow  # Bearish candle
         firstCandleHighLessThanThirdCandleHigh = firstCandleHigh < thirdCandleHigh  # Bearish candle
-        isGoodFVG = secondCandleHigh >= thirdCandleClose and secondCandleHigh >= thirdCandleOpen
+        isGoodFVG = True
+        # isGoodFVG = secondCandleHigh >= thirdCandleClose and secondCandleHigh >= thirdCandleOpen
 
         isFVGBroken = (i < (
                 len(data) - 3)) and firstCandleHigh > fourthCandleLow  # 4th candle dissrespected the FVG level
@@ -244,15 +245,15 @@ def analyze_stocks_daily_fvg(tickers1, time, checkGoodFVG, trend, startTime, end
 
     print(f"{time} fvg_stock_list")
     for fvg in fvg_stock_list:
-        fvg.print()
+        fvg.printData()
 
     print(f" hourly/ 15 m fvg_stock_list")
     for fvg in hourly_fvg:
-        fvg.print()
+        fvg.printData()
 
     print(f" breakaway {time} gaps fvg_stock_list")
     for fvg in breakaway:
-        fvg.print()
+        fvg.printData()
 
     return sorted_fvg
 

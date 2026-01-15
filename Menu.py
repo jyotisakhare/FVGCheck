@@ -1,7 +1,6 @@
 from CheckStockHasFVG import analyze_stocks_daily_fvg, analyze_stocks_weekly_fvg
 from Ticker import *
 
-
 def switch_menu():
     while True:
         print("\nSelect an operation:")
@@ -24,7 +23,7 @@ def switch_menu():
                                           trend="bull", startTime=startW, endTime=endW)
                 break
             case "3":
-                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1mo", checkGoodFVG=False,
+                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1mo", checkGoodFVG=isGoodFVG,
                                          trend="bull", startTime=startM, endTime=endM)
                 break
             case "4":

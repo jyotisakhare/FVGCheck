@@ -48,9 +48,9 @@ class FVGData:
     def sort(self):
         return self.rank
 
-    def print(self):
+    def printData(self):
         # print(f"{self.name} count {self.count} Diff - {self.priceDiff} C - {self.isConsolidating} Br - {self.isBroken}")
         try:
-            print(f"{self.name} count {self.count} C - {self.isConsolidating} Br - {self.isBroken} awayFromHigh - {int(self.awayFrom52WeekHigh)} FIIDIItionHolding - {int(self.institution_holding)} Diff - {int(self.priceDiff)} %")
+            print(f"{self.name} count {self.count} C - {self.isConsolidating} Br - {self.isBroken}  ")
         except Exception as e:
             print(f"print {e}")

@@ -19,7 +19,7 @@ startM = (current_datetime - timedelta(days=120)).strftime('%Y-%m-%d')
 endM = (current_datetime - timedelta(days=0)).strftime('%Y-%m-%d')
 
 isGoodFVG = True
-tickerGroup = "MINE"
+tickerGroup = "US"
 
 def get_tickers(type):
     if type == "NIFTY100":
@@ -101,6 +101,23 @@ def get_tickers(type):
                  ]
     elif type == "SINGLE":
         return ["INDHOTEL.NS"]
+    elif type == "US":
+        return ["AAPL", "MSFT", "NVDA", "GOOGL", "GOOG", "AMZN", "META",
+    "TSLA", "NFLX", "ADBE", "AMD", "INTC", "AVGO", "QCOM",
+    "MU", "COST", "PEP", "PYPL", "PLTR", "SNOW", # Exchanges
+    "COIN", "HOOD", "BKKT",
+
+    # Miners
+    "MARA", "RIOT", "CLSK", "HUT", "BITF", "WULF",
+
+    # Payments / FinTech
+    "PYPL", "SQ", "V", "MA",
+
+    # Tech / Holdings
+    "TSLA", "MSTR", "NVDA", "IBM",
+
+    # Financials
+    "GS", "JPM", "BLK"]
     elif type == "RAVI":
         return ["TRANSRAILL.NS", "SHAKTIPUMP.NS", "MOTILALOFS.NS", "E2E.NS", "EPACK.NS", "PNGJL.NS", "PCBL.NS",
                 "WAAREEENER.NS", "SAHASRA.NS", "TEJASNET.NS", "ORIENTTECH.NS", "KAYNES.NS", "IGIL.NS", "VMM.NS",
