@@ -19,7 +19,7 @@ startM = (current_datetime - timedelta(days=120)).strftime('%Y-%m-%d')
 endM = (current_datetime - timedelta(days=0)).strftime('%Y-%m-%d')
 
 isGoodFVG = True
-tickerGroup = "US"
+tickerGroup = "MINE"
 
 def get_tickers(type):
     if type == "NIFTY100":
