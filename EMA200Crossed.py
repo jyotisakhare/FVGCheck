@@ -30,7 +30,7 @@ def scan_stocks(
     *,
     ema_span: int = 200,
     high_lookback_trading_days: int = 252,   # ~52 weeks
-    near_high_within_pct: float = 5.0,       # within 5%
+    near_high_within_pct: float = 10.0,       # within 5%
     history_period: str = "2y",              # enough data for 200 EMA + 52w high
 ) -> Tuple[List[str], pd.DataFrame]:
     """

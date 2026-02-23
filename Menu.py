@@ -9,7 +9,8 @@ def switch_menu():
         print("3. Montly GFVG")
         print("4. Bearish Daily RFVG")
         print("5. Bearish Weekly RFVG")
-        print("6. Hourly bull FVG")
+        print("6. Bearish monthly RFVG")
+        print("7. Hourly bull FVG")
 
         choice = input("Enter your choice (1-5): ")
 
@@ -23,7 +24,7 @@ def switch_menu():
                                           trend="bull", startTime=startW, endTime=endW)
                 break
             case "3":
-                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1mo", checkGoodFVG=isGoodFVG,
+                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1mo", checkGoodFVG=False,
                                          trend="bull", startTime=startM, endTime=endM)
                 break
             case "4":
@@ -35,10 +36,14 @@ def switch_menu():
                                          trend="bear", startTime=startW, endTime=endW)
                 break
             case "6":
+                analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1mo", checkGoodFVG=False,
+                                         trend="bear", startTime=startM, endTime=endM)
+                break
+            case "7":
                 analyze_stocks_daily_fvg(get_tickers(tickerGroup), "1h", checkGoodFVG=False,
                                          trend="bull", startTime=startHr, endTime=endHr)
                 break
-            case "7":
+            case "8":
                 print("Exiting the program. Goodbye!")
                 break
             case _:

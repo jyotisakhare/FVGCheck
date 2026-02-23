@@ -195,6 +195,8 @@ def check_stock_has_bearish_fvg(data, ticker):
 def analyze_stocks_daily_fvg(tickers1, time, checkGoodFVG, trend, startTime, endTime):
     fvg_stock_list = []
     no_fvg_stock_list = []
+    print(f"Start date and time: {startTime}")
+    print(f"End date and time: {endTime}")
     for ticker in tickers1:
         print(f"Analyzing {ticker}...")
         # Fetch stock data from Yahoo Finance
