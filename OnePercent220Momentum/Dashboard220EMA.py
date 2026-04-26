@@ -128,7 +128,7 @@ def load_symbols():
 # ================= FETCH DATA =================
 def fetch_data(symbol):
     try:
-        df = yf.download(symbol, period="2y", interval="1d", progress=False)
+        df = yf.download(symbol+".NS", period="2y", interval="1d", progress=False)
 
         if df.empty:
             return None
