@@ -1,130 +1,165 @@
-from __future__ import annotations
-
-from dataclasses import dataclass
-from typing import Iterable, List, Optional, Tuple
-
-import pandas as pd
-
-# pip install yfinance pandas
 import yfinance as yf
+import pandas as pd
+import numpy as np
 
-from Ticker import tickerGroup, get_tickers
+# -----------------------------
+# Indicator Functions
+# -----------------------------
 
+def add_indicators(df):
+    # EMA
+    df['EMA20'] = df['Close'].ewm(span=20, adjust=False).mean()
+    df['EMA50'] = df['Close'].ewm(span=50, adjust=False).mean()
 
-@dataclass
-class StockScanResult:
-    ticker: str
-    close: float
-    ema200: float
-    crossed_ema200: bool
-    high_52w: float
-    pct_from_52w_high: float
+    # ATR (14)
+    high_low = df['High'] - df['Low']
+    high_close = np.abs(df['High'] - df['Close'].shift(1))
+    low_close = np.abs(df['Low'] - df['Close'].shift(1))
 
+    tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
+    df['ATR'] = tr.rolling(14).mean()
 
-def _compute_ema(series: pd.Series, span: int) -> pd.Series:
-    return series.ewm(span=span, adjust=False).mean()
+    # CCI (20)
+    tp = (df['High'] + df['Low'] + df['Close']) / 3
+    sma = tp.rolling(20).mean()
+    mad = tp.rolling(20).apply(lambda x: np.mean(np.abs(x - np.mean(x))), raw=True)
+    df['CCI'] = (tp - sma) / (0.015 * mad)
 
-
-def scan_stocks(
-    tickers: Iterable[str],
-    *,
-    ema_span: int = 200,
-    high_lookback_trading_days: int = 252,   # ~52 weeks
-    near_high_within_pct: float = 10.0,       # within 5%
-    history_period: str = "2y",              # enough data for 200 EMA + 52w high
-) -> Tuple[List[str], pd.DataFrame]:
-    """
-    Returns:
-      - list of tickers that crossed above 200 EMA AND are within near_high_within_pct of 52w high
-      - dataframe with metrics for all tickers successfully processed
-    """
-    tickers = [t.strip().upper() for t in tickers if str(t).strip()]
-    if not tickers:
-        return [], pd.DataFrame()
-
-    results: List[StockScanResult] = []
-
-    # Download in one shot for speed; group by ticker
-    data = yf.download(
-        tickers=tickers,
-        period=history_period,
-        interval="1d",
-        auto_adjust=False,
-        group_by="ticker",
-        threads=True,
-        progress=False,
-    )
-
-    def get_close_df(ticker: str) -> Optional[pd.Series]:
-        # yfinance shape differs for 1 vs many tickers
-        if isinstance(data.columns, pd.MultiIndex):
-            if ticker not in data.columns.get_level_values(0):
-                return None
-            return data[(ticker, "Close")].dropna()
-        else:
-            # single ticker case
-            if "Close" not in data.columns:
-                return None
-            return data["Close"].dropna()
-
-    for t in tickers:
-        close = get_close_df(t)
-        if close is None or len(close) < max(ema_span + 5, high_lookback_trading_days):
-            continue
-
-        ema200 = _compute_ema(close, ema_span)
-
-        # Crossed above today: yesterday close < yesterday EMA AND today close > today EMA
-        # crossed = bool(
-        #     close.iloc[-2] < ema200.iloc[-2] and close.iloc[-1] > ema200.iloc[-1]
-        # )
-        crossed = bool(close.iloc[-1] > ema200.iloc[-1])
-
-        # 52-week high from last ~252 trading days (including today)
-        window = close.iloc[-high_lookback_trading_days:]
-        high_52w = float(window.max())
-
-        last_close = float(close.iloc[-1])
-        pct_from_high = (high_52w - last_close) / high_52w * 100.0  # 0% means at the high
-
-        near_high = pct_from_high <= near_high_within_pct
-
-        results.append(
-            StockScanResult(
-                ticker=t,
-                close=last_close,
-                ema200=float(ema200.iloc[-1]),
-                crossed_ema200=crossed,
-                high_52w=high_52w,
-                pct_from_52w_high=float(pct_from_high),
-            )
-        )
-
-    df = pd.DataFrame([r.__dict__ for r in results])
-    if df.empty:
-        return [], df
-
-    # Filter: crossed + near high
-    picks = df[(df["crossed_ema200"]) & (df["pct_from_52w_high"] <= near_high_within_pct)].copy()
-
-    # Nice sorting: closest to 52w high first
-    picks = picks.sort_values(["pct_from_52w_high", "ticker"], ascending=[True, True])
-
-    return picks["ticker"].tolist(), picks.reset_index(drop=True)
+    return df
 
 
-# Shashank udupa 200 EMA crossing strategy for swing trading
-# https://chartink.com/screener/within-2-of-52-week-highs-chartitude
-#
-#
-# 1 ATH
-# 2 cross 200 EMA - and gains with high momentum within 90 days and breaks the ATH
-# 3. Breaks ATH - enter here and exist when it touch 200 EMA again
-# Stage 2 analysis  - plus the above https://chartink.com/screener/stage-2-trend-template
+# -----------------------------
+# Scoring Function
+# -----------------------------
 
-if __name__ == "__main__":
-    input_tickers = get_tickers(tickerGroup)  # <-- your list
-    selected, details = scan_stocks(input_tickers)
+def calculate_score(df):
+    score = 0
 
-    print("Selected tickers:", selected)
-    print(details.to_string(index=False))
+    # Always use iloc → guarantees scalar
+    close = df['Close'].iloc[-1]
+    ema20 = df['EMA20'].iloc[-1]
+    ema50 = df['EMA50'].iloc[-1]
+    atr = df['ATR'].iloc[-1]
+    volume = df['Volume'].iloc[-1]
+
+    # 1. Close > EMA50 (10%)
+    if close > ema50:
+        score += 10
+
+    # 2. Close > EMA20 (10%)
+    if close > ema20:
+        score += 10
+
+    # 3. EMA20 > EMA50 (20%)
+    if ema20 > ema50:
+        score += 20
+
+    # 4. Within 20% of 52-week high (30%)
+    high_52w = df['Close'].rolling(252).max().iloc[-1]
+    if close >= 0.8 * high_52w:
+        score += 30
+
+    # 5. ATR % < 3% (10%)
+    if pd.notna(atr) and close != 0:
+        atr_pct = (atr / close) * 100
+        if atr_pct < 3:
+            score += 10
+
+    # 6. CCI rising (slope method) (10%)
+    cci_last20 = df['CCI'].iloc[-20:].dropna()
+    if len(cci_last20) == 20:
+        x = np.arange(20)
+        slope = np.polyfit(x, cci_last20.values, 1)[0]
+        if slope > 0:
+            score += 10
+
+    # 7. Volume > 20-day avg (5%)
+    vol_avg_20 = df['Volume'].rolling(20).mean().iloc[-1]
+    if volume > vol_avg_20:
+        score += 5
+
+    # 8. Last 2 days > last 5 days volume (5%)
+    avg_2 = df['Volume'].iloc[-2:].mean()
+    avg_5 = df['Volume'].iloc[-5:].mean()
+    if avg_2 > avg_5:
+        score += 5
+
+    return score
+
+
+# -----------------------------
+# Main Analysis Function
+# -----------------------------
+
+def analyze_stocks(symbols):
+    results = []
+
+    for symbol in symbols:
+        try:
+            df = yf.download(symbol+".NS", period="1y", interval="1d", progress=False)
+
+            if df.empty or len(df) < 100:
+                continue
+
+            # 🔥 Fix multi-index issue (CRITICAL)
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
+
+            # Keep only required columns
+            df = df[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
+
+            # Clean data
+            df.dropna(inplace=True)
+
+            # Ensure numeric
+            df = df.astype(float)
+
+            # Add indicators
+            df = add_indicators(df)
+
+            # Calculate score
+            score = calculate_score(df)
+
+            if score > 65:
+                results.append({
+                    "Symbol": symbol,
+                    "Score": score
+                })
+
+        except Exception as e:
+            print(f"Error with {symbol}: {e}")
+
+    result_df = pd.DataFrame(results)
+
+    if not result_df.empty:
+        result_df = result_df.sort_values(by="Score", ascending=False)
+
+    return result_df
+
+
+
+
+# -----------------------------
+# Example Usage
+# -----------------------------
+
+
+# === CONFIG ===
+CSV_FILE = "nifty500.csv"  # change to your actual file name
+OUTPUT_DIR = "data"
+START_DATE = "2025-01-01"
+END_DATE = None  # None = till today
+
+# === CREATE DATA FOLDER ===
+# os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# === LOAD SYMBOLS ===
+df = pd.read_csv(CSV_FILE)
+
+if "Symbol" not in df.columns:
+    raise ValueError("CSV must contain a 'Symbol' column")
+
+symbols = df["Symbol"].dropna().unique().tolist()
+
+result = analyze_stocks(symbols)
+print(result)
