@@ -54,75 +54,100 @@ def evaluate_conditions(df):
 
     row = df.iloc[-1]
 
-    # ===== ORIGINAL CONDITIONS =====
-    cond1 = row["SMA150"] > row["EMA220"]
-    cond2 = row["Close"] > row["SMA50"]
-    cond3 = row["SMA50"] > row["SMA150"]
-    cond4 = row["Close"] > 1.25 * row["52W_LOW"]
+    score = 0
+    details = {}
 
-    # cond1 = True
-    # cond2 = True
-    # cond3 = True
-    # cond4 = True
-
-
-    recent = df.iloc[-90:]
-    cond5 = (recent["Close"] < recent["EMA220"]).any()
-
+    # ===== CORE =====
     breakout = row["Close"] >= df["Close"].rolling(252).max().iloc[-2]
-
-    # ===== NEW CONDITIONS =====
-    cond6 = row["Close"] > row["EMA50"]
-    cond7 = row["Close"] > row["EMA20"]
-    cond8 = row["EMA20"] > row["EMA50"]
+    if breakout:
+        score += 25
+    details["Breakout"] = breakout
 
     high_52w = row["52W_HIGH"]
-    cond9 = (row["Close"] >= 0.8 * high_52w)  # within 20%
+    near_high = row["Close"] >= 0.8 * high_52w
+    if near_high:
+        score += 15
+    details["Near 52W High"] = near_high
 
-    cond10 = row["ATR_PCT"] < 3 if pd.notna(row["ATR_PCT"]) else False
+    ema_align = row["EMA20"] > row["EMA50"]
+    if ema_align:
+        score += 15
+    details["EMA20 > EMA50"] = ema_align
+
+    vol_avg_20 = df["Volume"].rolling(20).mean().iloc[-1]
+    vol_strong = row["Volume"] > vol_avg_20
+    if vol_strong:
+        score += 15
+    details["Volume > Avg"] = vol_strong
+
+    # ===== MEDIUM =====
+    if row["Close"] > row["EMA20"]:
+        score += 5
+        details["Close > EMA20"] = True
+    else:
+        details["Close > EMA20"] = False
+
+    if row["Close"] > row["EMA50"]:
+        score += 5
+        details["Close > EMA50"] = True
+    else:
+        details["Close > EMA50"] = False
+
+    if row["SMA50"] > row["SMA150"]:
+        score += 5
+        details["SMA50 > SMA150"] = True
+    else:
+        details["SMA50 > SMA150"] = False
+
+    if row["Close"] > 1.25 * row["52W_LOW"]:
+        score += 5
+        details["Above 25% Low"] = True
+    else:
+        details["Above 25% Low"] = False
 
     # CCI slope
     cci_last20 = df["CCI"].iloc[-20:].dropna()
-    cond11 = False
+    cci_up = False
     if len(cci_last20) == 20:
         x = np.arange(20)
         slope = np.polyfit(x, cci_last20.values, 1)[0]
-        cond11 = slope > 0
+        if slope > 0:
+            score += 5
+            cci_up = True
+    details["CCI Uptrend"] = cci_up
 
-    vol_avg_20 = df["Volume"].rolling(20).mean().iloc[-1]
-    cond12 = row["Volume"] > vol_avg_20
+    # ===== LOW IMPACT =====
+    if row["SMA150"] > row["EMA220"]:
+        score += 2
+        details["Trend"] = True
+    else:
+        details["Trend"] = False
+
+    if row["Close"] > row["SMA50"]:
+        score += 2
+        details["Price > SMA50"] = True
+    else:
+        details["Price > SMA50"] = False
 
     avg_2 = df["Volume"].iloc[-2:].mean()
     avg_5 = df["Volume"].iloc[-5:].mean()
-    cond13 = avg_2 > avg_5
+    vol_mom = avg_2 > avg_5
+    if vol_mom:
+        score += 3
+    details["Volume Momentum"] = vol_mom
 
-    # ===== ALL CONDITIONS =====
-    conditions = {
-        "Trend (SMA150 > EMA220)": cond1,
-        "Price > SMA50": cond2,
-        "SMA50 > SMA150": cond3,
-        "Above 25% from Low": cond4,
-        "Recent EMA220 Dip": cond5,
-        "Breakout": breakout,
+    if pd.notna(row["ATR_PCT"]) and row["ATR_PCT"] < 3:
+        score += 3
+        details["Low ATR"] = True
+    else:
+        details["Low ATR"] = False
 
-        "Close > EMA50": cond6,
-        "Close > EMA20": cond7,
-        "EMA20 > EMA50": cond8,
-        "Near 52W High": cond9,
-        "Low Volatility (ATR <3%)": cond10,
-        "CCI Uptrend": cond11,
-        "Volume > 20D Avg": cond12,
-        "Volume Momentum": cond13
-    }
-
-    score = sum(conditions.values())
-
-    return conditions, score
+    return details, score
 
 # ================= LOAD SYMBOLS =================
 @st.cache_data
-def load_symbols():
-    df = pd.read_csv("nifty500.csv")
+def load_symbols(filename):
+    df = pd.read_csv(filename)
     return df["Symbol"].dropna().unique().tolist()
 
 # ================= FETCH DATA =================
@@ -146,9 +171,40 @@ def fetch_data(symbol):
         return None
 
 # ================= UI =================
-st.title("🚀 Advanced Momentum Dashboard")
+st.title("🚀 Advanced Momentum Dashboard India")
 
-symbols = load_symbols()
+symbols = load_symbols("nifty500.csv")
+
+results = []
+progress = st.progress(0)
+
+# ================= SCAN =================
+for i, symbol in enumerate(symbols):
+
+    df = fetch_data(symbol)
+
+    if df is None:
+        continue
+
+    output = evaluate_conditions(df)
+
+    if output is None:
+        continue
+
+    conditions, score = output
+
+    results.append({
+        "Symbol": symbol,
+        "Score": score,
+        **conditions
+    })
+
+    progress.progress((i + 1) / len(symbols))
+
+# ================= UI =================
+st.title("🚀 Advanced Momentum Dashboard US")
+
+symbols = load_symbols("nasdaq.csv")
 
 results = []
 progress = st.progress(0)
@@ -183,54 +239,37 @@ if results:
 
     max_score = len(result_df.columns) - 2  # exclude Symbol + Score
 
-    full_match = result_df[result_df["Score"] == max_score]
+    # Define thresholds
+    HIGH_QUALITY = 70
+    MEDIUM_QUALITY = 55
 
-    if not full_match.empty:
-        st.success(f"{len(full_match)} PERFECT setups found")
+    top_df = result_df.sort_values(by="Score", ascending=False)
 
-        st.dataframe(
-            full_match.sort_values(by="Score", ascending=False),
-            use_container_width=True
-        )
+    high_df = top_df[top_df["Score"] >= HIGH_QUALITY]
+    mid_df = top_df[(top_df["Score"] >= MEDIUM_QUALITY) & (top_df["Score"] < HIGH_QUALITY)]
 
-    else:
-        st.warning("No perfect setups today")
+    if not high_df.empty:
+        st.success(f"🔥 High Quality Setups (Score ≥ {HIGH_QUALITY})")
+        st.dataframe(high_df.head(10), use_container_width=True)
 
-        top_df = result_df.sort_values(by="Score", ascending=False).head(15)
+    if not mid_df.empty:
+        st.warning(f"⚡ Medium Setups (Score ≥ {MEDIUM_QUALITY})")
+        st.dataframe(mid_df.head(10), use_container_width=True)
+
+    if high_df.empty and mid_df.empty:
+        st.info("No strong setups — showing best available")
+
+        fallback = top_df.head(10)
 
         condition_cols = result_df.columns[2:]
 
-        top_df["Missing Conditions"] = top_df.apply(
+        fallback["Missing Conditions"] = fallback.apply(
             lambda row: [col for col in condition_cols if not row[col]],
             axis=1
         )
 
-        st.info("Top near-perfect setups")
+        st.dataframe(fallback, use_container_width=True)
 
-        st.dataframe(top_df, use_container_width=True)
-
-    near_match = result_df[result_df["Score"] == max_score - 3]
-
-    if not full_match.empty:
-        st.success(f"{len(near_match)} Near PERFECT setups found")
-
-        st.dataframe(
-            near_match.sort_values(by="Score", ascending=False),
-            use_container_width=True
-        )
-
-    # ===== CHART =====
-    st.subheader("📊 Chart")
-
-    selected = st.selectbox("Select Stock", result_df["Symbol"])
-
-    if selected:
-        chart_data = fetch_data(selected)
-        if chart_data is not None:
-            st.line_chart(chart_data["Close"])
-
-else:
-    st.error("No data available")
 
 # ================= AUTO REFRESH =================
 st.caption("Auto-refresh every 1 hr")
