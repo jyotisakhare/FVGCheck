@@ -60,10 +60,10 @@ def evaluate_conditions(df):
     cond3 = row["SMA50"] > row["SMA150"]
     cond4 = row["Close"] > 1.25 * row["52W_LOW"]
 
-    cond1 = True
-    cond2 = True
-    cond3 = True
-    cond4 = True
+    # cond1 = True
+    # cond2 = True
+    # cond3 = True
+    # cond4 = True
 
 
     recent = df.iloc[-90:]
@@ -122,13 +122,13 @@ def evaluate_conditions(df):
 # ================= LOAD SYMBOLS =================
 @st.cache_data
 def load_symbols():
-    df = pd.read_csv("nasdaq.csv")
+    df = pd.read_csv("nifty500.csv")
     return df["Symbol"].dropna().unique().tolist()
 
 # ================= FETCH DATA =================
 def fetch_data(symbol):
     try:
-        df = yf.download(symbol+".NS", period="2y", interval="1d", progress=False)
+        df = yf.download(symbol, period="2y", interval="1d", progress=False)
 
         if df.empty:
             return None
@@ -233,6 +233,6 @@ else:
     st.error("No data available")
 
 # ================= AUTO REFRESH =================
-st.caption("Auto-refresh every 5 minutes")
-time.sleep(300)
+st.caption("Auto-refresh every 1 hr")
+time.sleep(3600)
 st.rerun()
