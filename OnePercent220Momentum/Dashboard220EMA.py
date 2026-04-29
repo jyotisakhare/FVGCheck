@@ -144,6 +144,45 @@ def evaluate_conditions(df):
 
     return details, score
 
+#========Display Results
+def display_results(results):
+    if results:
+
+        result_df = pd.DataFrame(results)
+
+        max_score = len(result_df.columns) - 2  # exclude Symbol + Score
+
+        # Define thresholds
+        HIGH_QUALITY = 70
+        MEDIUM_QUALITY = 55
+
+        top_df = result_df.sort_values(by="Score", ascending=False)
+
+        high_df = top_df[top_df["Score"] >= HIGH_QUALITY]
+        mid_df = top_df[(top_df["Score"] >= MEDIUM_QUALITY) & (top_df["Score"] < HIGH_QUALITY)]
+
+        if not high_df.empty:
+            st.success(f"🔥 High Quality Setups (Score ≥ {HIGH_QUALITY})")
+            st.dataframe(high_df.head(10), use_container_width=True)
+
+        if not mid_df.empty:
+            st.warning(f"⚡ Medium Setups (Score ≥ {MEDIUM_QUALITY})")
+            st.dataframe(mid_df.head(10), use_container_width=True)
+
+        if high_df.empty and mid_df.empty:
+            st.info("No strong setups — showing best available")
+
+            fallback = top_df.head(10)
+
+            condition_cols = result_df.columns[2:]
+
+            fallback["Missing Conditions"] = fallback.apply(
+                lambda row: [col for col in condition_cols if not row[col]],
+                axis=1
+            )
+
+            st.dataframe(fallback, use_container_width=True)
+
 # ================= LOAD SYMBOLS =================
 @st.cache_data
 def load_symbols(filename):
@@ -204,13 +243,13 @@ for i, symbol in enumerate(symbols):
 # ================= UI =================
 st.title("🚀 Advanced Momentum Dashboard US")
 
-symbols = load_symbols("nasdaq.csv")
+symbolsUS = load_symbols("nasdaq.csv")
 
-results = []
-progress = st.progress(0)
+resultsUS = []
+progressUS = st.progress(0)
 
 # ================= SCAN =================
-for i, symbol in enumerate(symbols):
+for i, symbol in enumerate(symbolsUS):
 
     df = fetch_data(symbol)
 
@@ -224,51 +263,17 @@ for i, symbol in enumerate(symbols):
 
     conditions, score = output
 
-    results.append({
+    resultsUS.append({
         "Symbol": symbol,
         "Score": score,
         **conditions
     })
 
-    progress.progress((i + 1) / len(symbols))
+    progressUS.progress((i + 1) / len(symbols))
 
 # ================= DISPLAY =================
-if results:
-
-    result_df = pd.DataFrame(results)
-
-    max_score = len(result_df.columns) - 2  # exclude Symbol + Score
-
-    # Define thresholds
-    HIGH_QUALITY = 70
-    MEDIUM_QUALITY = 55
-
-    top_df = result_df.sort_values(by="Score", ascending=False)
-
-    high_df = top_df[top_df["Score"] >= HIGH_QUALITY]
-    mid_df = top_df[(top_df["Score"] >= MEDIUM_QUALITY) & (top_df["Score"] < HIGH_QUALITY)]
-
-    if not high_df.empty:
-        st.success(f"🔥 High Quality Setups (Score ≥ {HIGH_QUALITY})")
-        st.dataframe(high_df.head(10), use_container_width=True)
-
-    if not mid_df.empty:
-        st.warning(f"⚡ Medium Setups (Score ≥ {MEDIUM_QUALITY})")
-        st.dataframe(mid_df.head(10), use_container_width=True)
-
-    if high_df.empty and mid_df.empty:
-        st.info("No strong setups — showing best available")
-
-        fallback = top_df.head(10)
-
-        condition_cols = result_df.columns[2:]
-
-        fallback["Missing Conditions"] = fallback.apply(
-            lambda row: [col for col in condition_cols if not row[col]],
-            axis=1
-        )
-
-        st.dataframe(fallback, use_container_width=True)
+display_results(results)
+display_results(resultsUS)
 
 
 # ================= AUTO REFRESH =================
