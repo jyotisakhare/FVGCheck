@@ -237,7 +237,7 @@ for symbol in symbols:
             "RS": round(df["RS"].iloc[-1], 3)
         })
 
-TOP_N = 5
+TOP_N = 10
 
 df_final = pd.DataFrame()
 
