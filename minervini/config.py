@@ -4,24 +4,22 @@ CONFIG = {
     "INITIAL_CAPITAL": 100000,
     "POSITION_SIZE": 0.10,
     "MAX_POSITIONS": 10,
-    "TOP_N": 1,
-    "MARKET":"US",
+    "TOP_N": 5,
+    "MARKET":"INDIA",
 
     # Filters
-    "BREAKOUT_VOLUME_MULT": 1.2,
-    "BREAKOUT_STRENGTH": 0.7,
+    "BREAKOUT_VOLUME_MULT": 2.0,
+    "BREAKOUT_STRENGTH": 0.75,
     "MIN_ADX": 20,
     "MAX_EXTENSION": 1.15,
-    "MIN_NEAR_HIGH": 0.85,
+    "MIN_NEAR_HIGH": 0.78,
     "RS_LOOKBACK": 5,
     "MIN_LIQUIDITY": 5e6,
-    "MIN_DAYS": 200,
+    "MIN_DAYS": 252,
 
     # Exit
     "PARTIAL_PROFIT": 1.10,
     "PARTIAL_SELL": 0.30,
     "TRAIL_INITIAL": 0.85,
     "TRAIL_AFTER_PARTIAL": 0.90,
-
-
 }

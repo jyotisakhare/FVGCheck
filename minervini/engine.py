@@ -31,7 +31,7 @@ def run_backtest(data, cfg):
 
             portfolio.update(symbol, row)
 
-            if portfolio.check_exit(symbol, row, i):
+            if portfolio.check_exit(symbol, row, i, cfg):
 
                 next_open = df.iloc[i + 1]["Open"]
                 pos = portfolio.positions[symbol]
@@ -72,12 +72,13 @@ def run_backtest(data, cfg):
                 continue
 
             try:
-                if check_entry(df, i, cfg, debug=True):
+                if check_entry(df, i, cfg, debug=False):
                     score = calculate_score(df, i)
 
                     # skip bad scores
                     if score is None:
                         continue
+
 
                     candidates.append((symbol, score, i))
 
@@ -88,7 +89,7 @@ def run_backtest(data, cfg):
                 continue
 
         # ===== DEBUG (optional) =====
-        #print(f"{date} → candidates: {len(candidates)}")
+        print(f"{date} → candidates: {len(candidates)}")
 
         # ================= RANK =================
         candidates.sort(key=lambda x: x[1], reverse=True)

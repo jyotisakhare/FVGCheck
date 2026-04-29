@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import time
 from symbol_loader import load_market_symbols
-#from strategy import check_entry
+from strategy import check_entry
 from features import add_relative_strength
 from config import CONFIG
 from features import calculate_score
@@ -55,85 +55,85 @@ def add_indicators(df):
 
 
 # ================= STRATEGY =================
-def check_entry(df, market, config):
-
-    if len(df) < 200:
-        return False
-
-    row = df.iloc[-1]
-
-    required = ["Close", "EMA20", "EMA50", "SMA150", "VOL_AVG20"]
-
-    # ===== Safety checks =====
-    for col in required:
-        if col not in row or pd.isna(row[col]) or not np.isscalar(row[col]):
-            return False
-
-    # ===== RS FILTER =====
-    if "RS" not in df.columns or "RS_MA" not in df.columns:
-        return False
-
-    rs = df["RS"].iloc[-1]
-    rs_ma = df["RS_MA"].iloc[-1]
-
-    if pd.isna(rs) or pd.isna(rs_ma):
-        return False
-
-    # RS must be rising
-    if df["RS"].iloc[-1] < df["RS"].iloc[-5]:
-        return False
-
-    # ===== Trend structure =====
-    if not (
-        float(row["Close"]) >
-        float(row["EMA20"]) >
-        float(row["EMA50"]) >
-        float(row["SMA150"])
-    ):
-        return False
-
-    # ===== Breakout =====
-    prev_high = df["Close"].rolling(252).max().iloc[-2]
-
-    if row["Close"] < prev_high:
-        return False
-
-    # ===== Volume =====
-    vol_mult = 1.5 if market == "US" else 1.8
-
-    if row["Volume"] < vol_mult * row["VOL_AVG20"]:
-        return False
-
-    # ===== Breakout strength =====
-    candle_range = row["High"] - row["Low"]
-
-    if candle_range == 0:
-        return False
-
-    strength = (row["Close"] - row["Low"]) / candle_range
-
-    min_strength = 0.65 if market == "US" else 0.75
-
-    if strength < min_strength:
-        return False
-
-    # ===== Liquidity =====
-    liquidity = row["Close"] * row["Volume"]
-
-    if market == "US" and liquidity < 5e6:
-        return False
-
-    if market == "INDIA" and liquidity < 2e7:
-        return False
-
-    return True
+# def check_entry(df, market, config):
+#
+#     if len(df) < 200:
+#         return False
+#
+#     row = df.iloc[-1]
+#
+#     required = ["Close", "EMA20", "EMA50", "SMA150", "VOL_AVG20"]
+#
+#     # ===== Safety checks =====
+#     for col in required:
+#         if col not in row or pd.isna(row[col]) or not np.isscalar(row[col]):
+#             return False
+#
+#     # ===== RS FILTER =====
+#     if "RS" not in df.columns or "RS_MA" not in df.columns:
+#         return False
+#
+#     rs = df["RS"].iloc[-1]
+#     rs_ma = df["RS_MA"].iloc[-1]
+#
+#     if pd.isna(rs) or pd.isna(rs_ma):
+#         return False
+#
+#     # RS must be rising
+#     if df["RS"].iloc[-1] < df["RS"].iloc[-5]:
+#         return False
+#
+#     # ===== Trend structure =====
+#     if not (
+#         float(row["Close"]) >
+#         float(row["EMA20"]) >
+#         float(row["EMA50"]) >
+#         float(row["SMA150"])
+#     ):
+#         return False
+#
+#     # ===== Breakout =====
+#     prev_high = df["Close"].rolling(252).max().iloc[-2]
+#
+#     if row["Close"] < prev_high:
+#         return False
+#
+#     # ===== Volume =====
+#     vol_mult = 1.5 if market == "US" else 1.8
+#
+#     if row["Volume"] < vol_mult * row["VOL_AVG20"]:
+#         return False
+#
+#     # ===== Breakout strength =====
+#     candle_range = row["High"] - row["Low"]
+#
+#     if candle_range == 0:
+#         return False
+#
+#     strength = (row["Close"] - row["Low"]) / candle_range
+#
+#     min_strength = 0.65 if market == "US" else 0.75
+#
+#     if strength < min_strength:
+#         return False
+#
+#     # ===== Liquidity =====
+#     liquidity = row["Close"] * row["Volume"]
+#
+#     if market == "US" and liquidity < 5e6:
+#         return False
+#
+#     if market == "INDIA" and liquidity < 2e7:
+#         return False
+#
+#     return True
 
 # ================= FETCH STOCK =================
 @st.cache_data(ttl=30000)
 def fetch_stock(symbol):
 
     try:
-        df = yf.download(symbol, period="1y", interval="1d", progress=False)
+        df = yf.download(symbol, period="2y", interval="1d", progress=False)
 
         if df.empty:
             return None
@@ -213,6 +213,8 @@ else:
 
 # ===== SCAN =====
 candidates = []
+cfg = CONFIG.copy()
+cfg["MARKET"] = selected_market
 
 for symbol in symbols:
 
@@ -225,7 +227,7 @@ for symbol in symbols:
 
     i = len(df) - 1
 
-    if check_entry(df, i, CONFIG):
+    if check_entry(df, i, cfg, debug=True):
         score = calculate_score(df, i)
         candidates.append({
             "Symbol": symbol,

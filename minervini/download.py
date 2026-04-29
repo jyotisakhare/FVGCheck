@@ -2,8 +2,8 @@ import yfinance as yf
 import pandas as pd
 import os
 
-SAVE_DIR = "../data_us"
-SYMBOL_FILE = "nasdaq.csv"   # one column: Symbol
+SAVE_DIR = "../data_ind"
+SYMBOL_FILE = "nifty200.csv"   # one column: Symbol
 
 os.makedirs(SAVE_DIR, exist_ok=True)
 

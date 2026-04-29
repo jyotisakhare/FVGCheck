@@ -41,7 +41,50 @@ class Portfolio:
             pos["partial"] = True
             pos["stop"] = pos["entry"]
 
-    def check_exit(self, symbol, row, i):
+    def check_exit_ind(self, symbol, row, i, cfg):
+
+        pos = self.positions[symbol]
+        days_held = i - pos["entry_index"] + 1
+
+        # ===== 1. HARD STOP (ALWAYS FIRST) =====
+        if row["Close"] < pos["stop"]:
+            return True
+
+        # ===== 2. INDIA-SPECIFIC LOGIC =====
+        if cfg["MARKET"] == "INDIA":
+
+            # ---- Phase 1: Noise zone (0–2 days) ----
+            if days_held < 3:
+                return False  # ignore noise completely
+
+            # ---- Phase 2: Breakout confirmation (3–5 days) ----
+            if 3 <= days_held <= 5:
+                # allow small dip, not full failure
+                if row["Close"] < 0.97 * pos["entry"]:
+                    return True
+
+            # ---- Phase 3: Post-confirmation ----
+            # trailing logic continues below
+
+        # ===== 3. TRAILING STOP =====
+        if pos["partial"]:
+            # tighter after partial
+            if row["Close"] < cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:
+                return True
+        else:
+            # looser before partial
+            if row["Close"] < cfg["TRAIL_INITIAL"] * pos["highest"]:
+                return True
+
+        # ===== 4. TREND EXIT =====
+        if pos["partial"] and row["Close"] < row["EMA50"]:
+            return True
+
+        return False
+
+    def check_exit(self, symbol, row, i, cfg):
+        if cfg["MARKET"] == "INDIA":
+            return self.check_exit_ind(symbol, row, i, cfg)
 
         pos = self.positions[symbol]
 
@@ -54,8 +97,8 @@ class Portfolio:
             return True
 
         # ===== FAILED BREAKOUT EXIT =====
-        if days_held <= 5 and row["Close"] < pos["entry"]:
-            exit_flag = True
+        if days_held <= 5 and row["Close"] < pos["entry"] and cfg["MARKET"] == "INDIA":
+            return True
 
         # ===== 2. TRAILING STOP =====
         if pos["partial"]:
@@ -72,3 +115,4 @@ class Portfolio:
             return True
 
         return False
+

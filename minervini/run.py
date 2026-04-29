@@ -8,7 +8,7 @@ from metrics import compute_metrics
 
 DATA_DIR = "../data_us"
 
-data = load_data(DATA_DIR)
+data = load_data(DATA_DIR, "^GSPC")
 
 best = None
 
@@ -16,8 +16,11 @@ for vol in [2.0]: #[1.3, 1.5, 2.0]
     for strength in [0.75]: #[0.6, 0.7, 0.75]
 
         cfg = CONFIG.copy()
+        cfg["MARKET"] = "US"
         cfg["BREAKOUT_VOLUME_MULT"] = vol
         cfg["BREAKOUT_STRENGTH"] = strength
+        if cfg["MARKET"] == "INDIA":
+            cfg["TOP_N"] = 3
 
         trades, equity = run_backtest(data, cfg)
 
@@ -34,7 +37,7 @@ for vol in [2.0]: #[1.3, 1.5, 2.0]
 
         print(vol, strength, stats)
 
-# if best is None or stats["Return %"] > best[0]:
-#     best = (stats["Return %"], vol, strength)
+if best is None or stats["Return %"] > best[0]:
+    best = (stats["Return %"], vol, strength)
 
 print("\nBEST:", best)
