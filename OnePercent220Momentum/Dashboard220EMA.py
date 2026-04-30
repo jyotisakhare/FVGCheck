@@ -278,5 +278,5 @@ display_results(resultsUS)
 
 # ================= AUTO REFRESH =================
 st.caption("Auto-refresh every 1 hr")
-time.sleep(3600)
+time.sleep(36000)
 st.rerun()

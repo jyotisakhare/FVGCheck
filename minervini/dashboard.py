@@ -226,7 +226,7 @@ for symbol in symbols:
     df = add_relative_strength(df, index_df)
 
     i = len(df) - 1
-
+    # print(f"checking {symbol}")
     if check_entry(df, i, cfg, debug=True):
         score = calculate_score(df, i)
         candidates.append({

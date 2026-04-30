@@ -34,6 +34,9 @@ def compute_metrics(trades, equity, initial):
 
     max_dd = equity["DD"].min() * 100
 
+    trades.to_csv("trades.csv", index=False)
+    equity.to_csv("equity.csv", index=False)
+
     return {
         "Return %": total_return,
         "Win Rate": win_rate,

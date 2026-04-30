@@ -6,9 +6,9 @@ from data import load_data
 from engine import run_backtest
 from metrics import compute_metrics
 
-DATA_DIR = "../data_us"
+DATA_DIR = "../data_ind"
 
-data = load_data(DATA_DIR, "^GSPC")
+data = load_data(DATA_DIR, "^NSEI")
 
 best = None
 
@@ -16,7 +16,7 @@ for vol in [2.0]: #[1.3, 1.5, 2.0]
     for strength in [0.75]: #[0.6, 0.7, 0.75]
 
         cfg = CONFIG.copy()
-        cfg["MARKET"] = "US"
+        cfg["MARKET"] = "INDIA"
         cfg["BREAKOUT_VOLUME_MULT"] = vol
         cfg["BREAKOUT_STRENGTH"] = strength
         if cfg["MARKET"] == "INDIA":

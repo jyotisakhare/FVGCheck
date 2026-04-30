@@ -152,24 +152,29 @@ def check_entry(df, i, CONFIG, debug=False):
 def check_entry_india(df, i, cfg, debug=False):
 
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
+        if debug: print("FAIL RS_LOOKBACK")
         return False
 
     row = df.iloc[i]
 
     # TREND
     if not (row["Close"] > row["EMA50"] > row["SMA150"]):
+        if debug: print("FAIL trend")
         return False
 
     # BREAKOUT
     prev_high = df["Close"].rolling(252).max().iloc[i - 1]
     if pd.isna(prev_high):
+        if debug: print("FAIL breakout")
         return False
 
     if row["Close"] < prev_high:
+        if debug: print("FAIL breakout 2")
         return False
 
     # avoid chasing
     if row["Close"] > 1.08 * prev_high:
+        if debug: print("FAIL avoid chasing 2")
         return False
 
     # RS
@@ -177,19 +182,23 @@ def check_entry_india(df, i, cfg, debug=False):
     rs_past = df["RS"].iloc[i - cfg["RS_LOOKBACK"]]
 
     if rs_now <= 1.05 * rs_past:
+        if debug: print("FAIL rs_now")
         return False
 
     # VOLUME
     avg_vol = df["Volume"].rolling(20).mean().iloc[i]
     if row["Volume"] < 1.2 * avg_vol:
+        if debug: print("FAIL Volume")
         return False
 
     # FOLLOW THROUGH (NEW EDGE)
     if row["Close"] <= df["High"].iloc[i - 1]:
+        if debug: print("FAIL NEW EDGE")
         return False
 
     # TREND RISING
     if df["EMA50"].iloc[i] <= df["EMA50"].iloc[i - 5]:
+        if debug: print("FAIL TREND RISING")
         return False
 
     return True
