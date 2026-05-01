@@ -72,7 +72,7 @@ def run_backtest(data, cfg):
                 continue
 
             try:
-                if check_entry(df, i, cfg, debug=False):
+                if check_entry(df, i, cfg, symbol, debug=False):
                     score = calculate_score(df, i)
 
                     # skip bad scores

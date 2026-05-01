@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 
 
-def check_entry(df, i, CONFIG, debug=False):
+def check_entry(df, i, CONFIG, symbol, debug=False):
+    print(f"checking {symbol}")
     cfg = CONFIG.copy()
     if cfg["MARKET"] == "INDIA":
         cfg["BREAKOUT_VOLUME_MULT"] = 1.2

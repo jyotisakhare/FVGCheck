@@ -227,7 +227,7 @@ for symbol in symbols:
 
     i = len(df) - 1
     # print(f"checking {symbol}")
-    if check_entry(df, i, cfg, debug=True):
+    if check_entry(df, i, cfg, symbol, debug=True):
         score = calculate_score(df, i)
         candidates.append({
             "Symbol": symbol,
