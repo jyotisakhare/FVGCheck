@@ -6,9 +6,7 @@ from data import load_data
 from engine import run_backtest
 from metrics import compute_metrics
 
-DATA_DIR = "../data_ind"
-
-data = load_data(DATA_DIR, "^NSEI")
+data = load_data()
 
 best = None
 
@@ -16,7 +14,6 @@ for vol in [2.0]: #[1.3, 1.5, 2.0]
     for strength in [0.75]: #[0.6, 0.7, 0.75]
 
         cfg = CONFIG.copy()
-        cfg["MARKET"] = "INDIA"
         cfg["BREAKOUT_VOLUME_MULT"] = vol
         cfg["BREAKOUT_STRENGTH"] = strength
         if cfg["MARKET"] == "INDIA":
@@ -41,3 +38,7 @@ if best is None or stats["Return %"] > best[0]:
     best = (stats["Return %"], vol, strength)
 
 print("\nBEST:", best)
+# India results till 30th APR
+# {'Return %': 30, 'Win Rate': 42, 'Expectancy': 3, 'avg win': 17, 'avg loss': -7, 'Max DD': -8, 'Trades': 146}
+# US results till 20th APR
+# {'Return %': 30, 'Win Rate': 49, 'Expectancy': 4, 'avg win': 19, 'avg loss': -11, 'Max DD': -12, 'Trades': 136}

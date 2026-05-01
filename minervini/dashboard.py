@@ -12,7 +12,7 @@ from config import CONFIG
 from features import calculate_score
 
 # ================= CONFIG =================
-REFRESH_SECONDS = 60
+REFRESH_SECONDS = 3600
 
 MARKETS = {
     "US": ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN"],
@@ -129,7 +129,7 @@ def add_indicators(df):
 #     return True
 
 # ================= FETCH STOCK =================
-@st.cache_data(ttl=30000)
+@st.cache_data(ttl=14400)
 def fetch_stock(symbol):
 
     try:
@@ -148,7 +148,7 @@ def fetch_stock(symbol):
 
 
 # ================= FETCH INDEX =================
-@st.cache_data(ttl=30000)
+@st.cache_data(ttl=14400)
 def fetch_index(symbol):
 
     df = yf.download(symbol, period="1y", interval="1d", progress=False)

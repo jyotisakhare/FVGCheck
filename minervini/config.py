@@ -5,7 +5,7 @@ CONFIG = {
     "POSITION_SIZE": 0.10,
     "MAX_POSITIONS": 10,
     "TOP_N": 5,
-    "MARKET":"INDIA",
+    "MARKET":"US",
 
     # Filters
     "BREAKOUT_VOLUME_MULT": 2.0,

@@ -38,11 +38,11 @@ def compute_metrics(trades, equity, initial):
     equity.to_csv("equity.csv", index=False)
 
     return {
-        "Return %": total_return,
-        "Win Rate": win_rate,
-        "Expectancy": expectancy,
-        "avg win": avg_win,
-        "avg loss": avg_loss,
-        "Max DD": max_dd,
+        "Return %": round(total_return),
+        "Win Rate": round(win_rate),
+        "Expectancy": round(expectancy),
+        "avg win": round(avg_win),
+        "avg loss": round(avg_loss),
+        "Max DD": round(max_dd),
         "Trades": len(trades)
     }

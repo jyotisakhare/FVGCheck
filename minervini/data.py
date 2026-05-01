@@ -1,6 +1,7 @@
 # data.py
 
 import pandas as pd
+from config import CONFIG
 import numpy as np
 import os
 import yfinance as yf
@@ -33,7 +34,13 @@ def load_index_data(symbol="^GSPC"):  # Change to ^NSEI for India
 
 
 # ================= MAIN LOADER =================
-def load_data(DATA_DIR, index_symbol="^GSPC"):
+def load_data():
+    if CONFIG["MARKET"] == "US":
+        data_dir = "../data_us"
+        index_symbol = "^GSPC"
+    else:
+        data_dir = "../data_ind"
+        index_symbol = "^NSEI"
 
     data = {}
 
@@ -44,12 +51,12 @@ def load_data(DATA_DIR, index_symbol="^GSPC"):
         print("❌ Cannot proceed without index data")
         return {}
 
-    for file in os.listdir(DATA_DIR):
+    for file in os.listdir(data_dir):
 
         if not file.endswith(".csv"):
             continue
 
-        path = os.path.join(DATA_DIR, file)
+        path = os.path.join(data_dir, file)
 
         try:
             # ===== READ RAW =====

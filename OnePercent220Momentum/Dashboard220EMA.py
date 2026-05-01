@@ -184,7 +184,7 @@ def display_results(results):
             st.dataframe(fallback, use_container_width=True)
 
 # ================= LOAD SYMBOLS =================
-@st.cache_data
+@st.cache_data(ttl=14400)
 def load_symbols(filename):
     df = pd.read_csv(filename)
     return df["Symbol"].dropna().unique().tolist()
@@ -278,5 +278,5 @@ display_results(resultsUS)
 
 # ================= AUTO REFRESH =================
 st.caption("Auto-refresh every 1 hr")
-time.sleep(36000)
+time.sleep(3600)
 st.rerun()
