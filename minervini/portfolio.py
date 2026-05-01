@@ -41,78 +41,73 @@ class Portfolio:
             pos["partial"] = True
             pos["stop"] = pos["entry"]
 
-    def check_exit_ind(self, symbol, row, i, cfg):
-
+    def check_exit_ind(self, symbol, row, i, cfg, df):
+        print(f"checking exit india for {symbol}")
         pos = self.positions[symbol]
-        days_held = i - pos["entry_index"] + 1
 
-        # ===== 1. HARD STOP (ALWAYS FIRST) =====
+        # ===== DAYS HELD =====
+        days_held = self.get_days_held(df, pos, i)
+
+        # ===== 1. HARD STOP =====
         if row["Close"] < pos["stop"]:
-            return True
+            return True, "HARD STOP"
 
-        # ===== 2. INDIA-SPECIFIC LOGIC =====
-        if cfg["MARKET"] == "INDIA":
+        # ===== 2. INDIA LOGIC =====
+        if days_held < 3:
+            return False, None
 
-            # ---- Phase 1: Noise zone (0–2 days) ----
-            if days_held < 3:
-                return False  # ignore noise completely
-
-            # ---- Phase 2: Breakout confirmation (3–5 days) ----
-            if 3 <= days_held <= 5:
-                # allow small dip, not full failure
-                if row["Close"] < 0.97 * pos["entry"]:
-                    return True
-
-            # ---- Phase 3: Post-confirmation ----
-            # trailing logic continues below
+        if 3 <= days_held <= 5:
+            if row["Close"] < 0.97 * pos["entry"]:
+                return True, "FAILED BREAKOUT"
 
         # ===== 3. TRAILING STOP =====
         if pos["partial"]:
-            # tighter after partial
             if row["Close"] < cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:
-                return True
+                return True, "TRAIL AFTER PARTIAL"
         else:
-            # looser before partial
             if row["Close"] < cfg["TRAIL_INITIAL"] * pos["highest"]:
-                return True
+                return True, "TRAIL INITIAL"
 
         # ===== 4. TREND EXIT =====
         if pos["partial"] and row["Close"] < row["EMA50"]:
-            return True
+            return True, "TREND BREAK"
 
-        return False
+        return False, None
 
-    def check_exit(self, symbol, row, i, cfg):
+    def check_exit(self, symbol, row, i, cfg, df):
+
         if cfg["MARKET"] == "INDIA":
-            return self.check_exit_ind(symbol, row, i, cfg)
+            return self.check_exit_ind(symbol, row, i, cfg, df)
 
         pos = self.positions[symbol]
+        days_held = self.get_days_held(df, pos, i)
 
-        days_held = i - pos["entry_index"]
-
-
-
-        # ===== 1. HARD STOP (highest priority) =====
+        # ===== HARD STOP =====
         if row["Close"] < pos["stop"]:
-            return True
+            return True, "HARD STOP"
 
-        # ===== FAILED BREAKOUT EXIT =====
-        if days_held <= 5 and row["Close"] < pos["entry"] and cfg["MARKET"] == "INDIA":
-            return True
+        # ===== FAILED BREAKOUT =====
+        if days_held <= 5 and row["Close"] < pos["entry"]:
+            return True, "FAILED BREAKOUT"
 
-        # ===== 2. TRAILING STOP =====
+        # ===== TRAILING =====
         if pos["partial"]:
-            # After partial → tighter trailing
-            if row["Close"] < self.cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:
-                return True
+            if row["Close"] < cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:
+                return True, "TRAIL AFTER PARTIAL"
         else:
-            # Before partial → looser trailing OR disable
-            if row["Close"] < self.cfg["TRAIL_INITIAL"] * pos["highest"]:
-                return True
+            if row["Close"] < cfg["TRAIL_INITIAL"] * pos["highest"]:
+                return True, "TRAIL INITIAL"
 
-        # ===== 3. TREND EXIT (only after partial) =====
+        # ===== TREND =====
         if pos["partial"] and row["Close"] < row["EMA50"]:
-            return True
+            return True, "TREND BREAK"
 
-        return False
+        return False, None
 
+    def get_days_held(self, df, pos, i):
+        try:
+            entry_idx = df.index.get_loc(pos["entry_date"])
+            return i - entry_idx
+        except:
+            print(f"days held returned 0")
+            return 0

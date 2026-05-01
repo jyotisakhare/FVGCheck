@@ -17,7 +17,7 @@ for vol in [2.0]: #[1.3, 1.5, 2.0]
         cfg["BREAKOUT_VOLUME_MULT"] = vol
         cfg["BREAKOUT_STRENGTH"] = strength
         if cfg["MARKET"] == "INDIA":
-            cfg["TOP_N"] = 3
+            cfg["TOP_N"] = 1
 
         trades, equity = run_backtest(data, cfg)
 

@@ -31,7 +31,8 @@ def run_backtest(data, cfg):
 
             portfolio.update(symbol, row)
 
-            if portfolio.check_exit(symbol, row, i, cfg):
+            exit_flag, exit_reason = portfolio.check_exit(symbol, row, i, cfg, df)
+            if exit_flag:
 
                 next_open = df.iloc[i + 1]["Open"]
                 pos = portfolio.positions[symbol]
@@ -49,7 +50,8 @@ def run_backtest(data, cfg):
                     "Exit Date": df.index[i + 1],
                     "Entry Price": pos["entry"],
                     "Exit Price": next_open,
-                    "Return %": (next_open - pos["entry"]) / pos["entry"] * 100
+                    "Return %": (next_open - pos["entry"]) / pos["entry"] * 100,
+                    "reason": exit_reason
                 })
 
                 del portfolio.positions[symbol]
