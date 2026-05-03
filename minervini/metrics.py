@@ -1,8 +1,7 @@
 # metrics.py
 
-import numpy as np
-
 import pandas as pd
+from config import CONFIG
 
 def compute_metrics(trades, equity, initial):
 
@@ -34,8 +33,12 @@ def compute_metrics(trades, equity, initial):
 
     max_dd = equity["DD"].min() * 100
 
-    trades.to_csv("trades.csv", index=False)
-    equity.to_csv("equity.csv", index=False)
+    if CONFIG["MARKET"] == "INDIA":
+        trades.to_csv("trades_ind.csv", index=False)
+        equity.to_csv("equity_ind.csv", index=False)
+    else:
+        trades.to_csv("trades_us.csv", index=False)
+        equity.to_csv("equity_us.csv", index=False)
 
     return {
         "Return %": round(total_return),

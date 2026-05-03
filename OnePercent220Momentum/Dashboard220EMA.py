@@ -269,7 +269,7 @@ for i, symbol in enumerate(symbolsUS):
         **conditions
     })
 
-    progressUS.progress((i + 1) / len(symbols))
+    progressUS.progress((i + 1) / len(symbolsUS))
 
 # ================= DISPLAY =================
 display_results(results)

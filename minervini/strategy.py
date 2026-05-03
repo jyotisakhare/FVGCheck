@@ -169,11 +169,6 @@ def check_entry_india(df, i, cfg, debug=False):
         return False
 
 
-    # FOLLOW THROUGH (NEW EDGE)
-    if row["Close"] < row["High"] * 0.9:
-        if debug: print("FAIL NEW EDGE")
-        return False
-
     # TREND RISING
     if df["EMA50"].iloc[i] <= df["EMA50"].iloc[i - 5]:
         if debug: print("FAIL TREND RISING")
@@ -193,7 +188,7 @@ def check_entry_india(df, i, cfg, debug=False):
         return False
 
     # 5. STRONG FOLLOW-THROUGH
-    if row["Close"] < 0.85 * row["High"]:
+    if row["Close"] < 0.9 * row["High"]:
         if debug: print("FAIL WEAK CLOSE")
         return False
 
@@ -212,5 +207,19 @@ def check_entry_india(df, i, cfg, debug=False):
     # expansion candle
     if (row["High"] - row["Low"]) < 1.2 * (df["High"] - df["Low"]).rolling(10).mean().iloc[i]:
         return False
+
+    # tight base BEFORE breakout
+    # base_range = (df["High"] - df["Low"]).rolling(15).mean().iloc[i]
+    # base_range_long = (df["High"] - df["Low"]).rolling(40).mean().iloc[i]
+    #
+    # if base_range > 0.65 * base_range_long:
+    #     return False
+
+    # # breakout must be fresh (not 2nd/3rd day move)
+    # if df["Close"].iloc[i - 1] > prev_high:
+    #     return False
+
+    # if row["Open"] < prev_high:
+    #     return False
 
     return True

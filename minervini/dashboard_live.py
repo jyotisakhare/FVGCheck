@@ -51,6 +51,11 @@ CONFIG["MARKET"] = market
 # =========================================================
 st.header("📁 Live Portfolio")
 
+if market == "INDIA":
+    POSITIONS_FILE = "minervini/positions.csv"
+else:
+    POSITIONS_FILE = "minervini/positions_us.csv"
+
 try:
     positions_df = pd.read_csv(POSITIONS_FILE)
     positions_df["Entry Date"] = pd.to_datetime(positions_df["Entry Date"], dayfirst=True)

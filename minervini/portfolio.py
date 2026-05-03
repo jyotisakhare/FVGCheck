@@ -42,7 +42,7 @@ class Portfolio:
             pos["stop"] = pos["entry"]
 
     def check_exit_ind(self, symbol, row, i, cfg, df):
-        print(f"checking exit india for {symbol}")
+        # print(f"checking exit india for {symbol}")
         pos = self.positions[symbol]
 
         # ===== DAYS HELD =====
@@ -86,9 +86,6 @@ class Portfolio:
         if row["Close"] < pos["stop"]:
             return True, "HARD STOP"
 
-        # ===== FAILED BREAKOUT =====
-        if days_held <= 5 and row["Close"] < pos["entry"]:
-            return True, "FAILED BREAKOUT"
 
         # ===== TRAILING =====
         if pos["partial"]:

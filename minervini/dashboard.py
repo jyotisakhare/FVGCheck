@@ -183,6 +183,7 @@ def is_market_strong(index_df):
 # ================= UI =================
 st.set_page_config(layout="wide")
 st.title("🚀 Momentum Scanner PRO")
+progress = st.progress(0)
 
 markets = load_market_symbols("")
 
@@ -215,7 +216,7 @@ else:
 candidates = []
 cfg = CONFIG.copy()
 cfg["MARKET"] = selected_market
-
+row = 0
 for symbol in symbols:
 
     df = fetch_stock(symbol)
@@ -226,7 +227,7 @@ for symbol in symbols:
     df = add_relative_strength(df, index_df)
 
     i = len(df) - 1
-    # print(f"checking {symbol}")
+    print(f"checking {symbol}")
     if check_entry(df, i, cfg, symbol, debug=True):
         score = calculate_score(df, i)
         candidates.append({
@@ -236,6 +237,8 @@ for symbol in symbols:
             "Volume": int(df["Volume"].iloc[-1]),
             "RS": round(df["RS"].iloc[-1], 3)
         })
+    progress.progress((row + 1) / len(symbols))
+    row = row + 1
 
 TOP_N = 10
 
