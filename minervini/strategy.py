@@ -4,7 +4,9 @@ import numpy as np
 
 
 def check_entry(df, i, CONFIG, symbol, debug=False):
-    print(f"checking {symbol}")
+
+    if debug: print(f"checking {symbol}")
+
     cfg = CONFIG.copy()
     if cfg["MARKET"] == "INDIA":
         cfg["BREAKOUT_VOLUME_MULT"] = 1.2
@@ -46,52 +48,22 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
     rs_now = df["RS"].iloc[i]
     rs_past = df["RS"].iloc[i - cfg["RS_LOOKBACK"]]
 
-    # ===== BREAKOUT ZONE =====
-    prev_high = df["Close"].rolling(252).max().iloc[i - 1]
-
     # ===== VOLUME =====
     avg_vol = df["Volume"].rolling(20).mean().iloc[i]
-
-
-    # STRICT INDIA VERSION
-
-    if cfg["MARKET"] == "INDIA":
-        distance = row["Close"] / prev_high
-        # near highs
-        if distance < 0.90:
-            return False
-
-        # only breakout trades
-        if row["Close"] < prev_high:
-            return False
-
-        # avoid late entries near exhaustion
-        if row["Close"] > 1.05 * prev_high:
-            return False
-
-        # strong RS
-        if rs_now <= 1.05 * rs_past:
-            return False
-
-        # stronger volume
-        if row["Volume"] < 1.2 * avg_vol:
-            return False
-
-        # trend must be rising
-        if df["EMA50"].iloc[i] <= df["EMA50"].iloc[i - 5]:
-            return False
-
-        # volatility contraction before breakout
-        range_mean = (df["High"] - df["Low"]).rolling(10).mean().iloc[i]
-        range_past = (df["High"] - df["Low"]).rolling(30).mean().iloc[i]
-
-        if range_mean > range_past:
-            return False
-
 
     if rs_now <= rs_past:
         if debug: print("FAIL RS")
         return False
+
+    # 3. RS ACCELERATION (STRONG EDGE)
+    rs_now = df["RS"].iloc[i]
+    rs_past = df["RS"].iloc[i - cfg["RS_LOOKBACK"]]
+    rs_mid = df["RS"].iloc[i - int(cfg["RS_LOOKBACK"] / 2)]
+
+    if not (rs_now > rs_mid > rs_past):
+        if debug: print("FAIL RS ACCELERATION")
+        return False
+
 
     # ===== LIQUIDITY =====
     liquidity = row["Close"] * row["Volume"]
@@ -100,12 +72,21 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
         if debug: print("FAIL LIQUIDITY")
         return False
 
-    if cfg["MARKET"] == "INDIA" and liquidity < 2e7:
-        if debug: print("FAIL LIQUIDITY")
-        return False
-
+    # ===== BREAKOUT ZONE =====
+    prev_high = df["Close"].rolling(252).max().iloc[i - 1]
     if pd.isna(prev_high):
         return False
+
+    #     # 6. BASE TIGHTNESS (VERY IMPORTANT)
+    # range_10 = (df["High"] - df["Low"]).rolling(10).mean().iloc[i]
+    # range_30 = (df["High"] - df["Low"]).rolling(30).mean().iloc[i]
+    #
+    # # stricter for india
+    # base_threshold = 0.7 if cfg["MARKET"] == "INDIA" else 0.8
+    #
+    # if range_10 > base_threshold * range_30:
+    #     if debug: print("FAIL LOOSE BASE")
+    #     return False
 
     distance = row["Close"] / prev_high
 
@@ -169,12 +150,13 @@ def check_entry_india(df, i, cfg, debug=False):
         if debug: print("FAIL breakout")
         return False
 
-    if row["Close"] < prev_high:
-        if debug: print("FAIL breakout 2")
+        # 1. MUST BE TRUE BREAKOUT
+    if row["Close"] < 1.03 * prev_high:
+        if debug: print("FAIL WEAK BREAKOUT")
         return False
 
     # avoid chasing
-    if row["Close"] > 1.08 * prev_high:
+    if row["Close"] > 1.06 * prev_high:
         if debug: print("FAIL avoid chasing 2")
         return False
 
@@ -182,24 +164,53 @@ def check_entry_india(df, i, cfg, debug=False):
     rs_now = df["RS"].iloc[i]
     rs_past = df["RS"].iloc[i - cfg["RS_LOOKBACK"]]
 
-    if rs_now <= 1.05 * rs_past:
+    if rs_now <= 1.08 * rs_past:
         if debug: print("FAIL rs_now")
         return False
 
-    # VOLUME
-    avg_vol = df["Volume"].rolling(20).mean().iloc[i]
-    if row["Volume"] < 1.2 * avg_vol:
-        if debug: print("FAIL Volume")
-        return False
 
     # FOLLOW THROUGH (NEW EDGE)
-    if row["Close"] <= df["High"].iloc[i - 1]:
+    if row["Close"] < row["High"] * 0.9:
         if debug: print("FAIL NEW EDGE")
         return False
 
     # TREND RISING
     if df["EMA50"].iloc[i] <= df["EMA50"].iloc[i - 5]:
         if debug: print("FAIL TREND RISING")
+        return False
+
+        # ===== LIQUIDITY =====
+    liquidity = row["Close"] * row["Volume"]
+
+    if liquidity < 2e7:
+        if debug: print("FAIL LIQUIDITY")
+        return False
+
+    # 4. STRONG VOLUME
+    avg_vol = df["Volume"].rolling(20).mean().iloc[i]
+    if row["Volume"] < 1.2 * avg_vol:
+        if debug: print("FAIL VOLUME")
+        return False
+
+    # 5. STRONG FOLLOW-THROUGH
+    if row["Close"] < 0.85 * row["High"]:
+        if debug: print("FAIL WEAK CLOSE")
+        return False
+
+    # 6. EMA TREND MUST RISE
+    if df["EMA50"].iloc[i] <= df["EMA50"].iloc[i - 5]:
+        if debug: print("FAIL EMA50 TREND")
+        return False
+
+        # 3. NO OVERHEAD SUPPLY
+    high_20 = df["High"].rolling(20).max().iloc[i - 1]
+
+    if row["Close"] < high_20:
+        if debug: print("FAIL OVERHEAD SUPPLY")
+        return False
+
+    # expansion candle
+    if (row["High"] - row["Low"]) < 1.2 * (df["High"] - df["Low"]).rolling(10).mean().iloc[i]:
         return False
 
     return True
