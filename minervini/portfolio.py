@@ -58,7 +58,7 @@ class Portfolio:
 
         if 3 <= days_held <= 5:
             if row["Close"] < 0.97 * pos["entry"]:
-                return True, "FAILED BREAKOUT"
+                return True, "FAILED BREAKOUT IND"
 
         # ===== 3. TRAILING STOP =====
         if pos["partial"]:

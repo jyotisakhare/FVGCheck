@@ -51,7 +51,7 @@ CONFIG["MARKET"] = market
 # =========================================================
 # 📁 SECTION 1 — LIVE PORTFOLIO
 # =========================================================
-st.header("📁 Live Portfolio")
+st.header("📁 Live Portfolio "+market)
 
 if market == "INDIA":
     POSITIONS_FILE = "minervini/positions.csv"
