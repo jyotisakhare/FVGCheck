@@ -13,6 +13,7 @@ def fetch_symbol(symbol):
         df = yf.download(symbol, period="1y", interval="1d", progress=False)
 
         if df.empty:
+            print(f"fetch_symbol failed for {symbol}")
             return None
 
         if isinstance(df.columns, pd.MultiIndex):
@@ -29,7 +30,8 @@ def fetch_symbol(symbol):
 
         return df
 
-    except:
+    except e:
+        print(f"fetch_symbol failed for {e}")
         return None
 
 
@@ -76,10 +78,11 @@ try:
     results = []
 
     for symbol, pos in portfolio.positions.items():
-
+        print(f"checking live  {symbol}")
         df = fetch_symbol(symbol)
 
-        if df is None or len(df) < 200:
+        if df is None:
+            print(f"no live data {symbol}")
             continue
 
         row = df.iloc[-1]
@@ -124,7 +127,8 @@ try:
             "Highest": round(pos["highest"], 2),
             "Next Stop": round(next_stop, 2),
             "Action": action,
-            "Reason": exit_reason if exit_reason else ""
+            "Reason": exit_reason if exit_reason else "",
+            "Days": days
         })
 
     df_live = pd.DataFrame(results)
