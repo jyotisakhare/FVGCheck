@@ -7,7 +7,7 @@ from portfolio import Portfolio
 import yfinance as yf
 
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=60)
 def fetch_symbol(symbol):
     try:
         df = yf.download(symbol, period="1y", interval="1d", progress=False)
