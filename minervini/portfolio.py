@@ -56,10 +56,6 @@ class Portfolio:
         if days_held < 3:
             return False, None
 
-        if 3 <= days_held <= 5:
-            if row["Close"] < 0.97 * pos["entry"]:
-                return True, "FAILED BREAKOUT IND"
-
         # ===== 3. TRAILING STOP =====
         if pos["partial"]:
             if row["Close"] < cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:

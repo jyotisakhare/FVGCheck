@@ -96,7 +96,7 @@ def display_candidates(candidates, index_file):
         st.success(f"Top {TOP_N} Elite Setups {index_file}")
         st.dataframe(df_final, use_container_width=True)
     else:
-        st.warning("No elite setups today")
+        st.warning(f"No elite setups today {index_file}")
 
 # ================= STRATEGY =================
 # def check_entry(df, market, config):
@@ -267,7 +267,10 @@ display_candidates(candidates, "TOP Index")
 if selected_market == "INDIA":
     symbols = load_market_symbols_from_file("nifty_small_100.csv")
     candidates = fetch_candidates(symbols)
-    display_candidates(candidates, "TOP Index")
+    display_candidates(candidates, "small cap")
+    symbols = load_market_symbols_from_file("nifty_mid_100.csv")
+    candidates = fetch_candidates(symbols)
+    display_candidates(candidates, "mid cap")
 
 # ===== AUTO REFRESH =====
 st.caption(f"Auto refresh every {REFRESH_SECONDS}s")
