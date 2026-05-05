@@ -41,3 +41,31 @@ def load_market_symbols(base_path=""):
             markets[market] = []
 
     return markets
+
+def load_market_symbols_from_file(filename):
+    path = os.path.join(filename)
+
+    if not os.path.exists(path):
+        print(f"⚠️ Missing file: {filename}")
+        return []
+
+    try:
+        df = pd.read_csv(path)
+        df.columns = [c.strip().lower() for c in df.columns]
+
+        if "symbol" not in df.columns:
+            raise ValueError(f"{filename} must contain 'Symbol' column")
+
+        symbols = (
+            df["symbol"]
+            .dropna()
+            .astype(str)
+            .str.strip()
+            .unique()
+            .tolist()
+        )
+        return symbols
+    except Exception as e:
+        print(f"❌ Error loading {filename}: {e}")
+
+    return []

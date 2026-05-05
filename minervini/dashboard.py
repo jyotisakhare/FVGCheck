@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import time
 from symbol_loader import load_market_symbols
+from symbol_loader import load_market_symbols_from_file
 from strategy import check_entry
 from features import add_relative_strength
 from config import CONFIG
@@ -52,7 +53,51 @@ def add_indicators(df):
 
     return df
 
+# =========== fetch symbols candidates =========
+def fetch_candidates(symbols) :
+    row = 0
+    local_candidates = []
+    for symbol in symbols:
 
+        df = fetch_stock(symbol)
+
+        if df is None:
+            continue
+
+        df = add_relative_strength(df, index_df)
+
+        i = len(df) - 1
+        print(f"checking {symbol}")
+        if check_entry(df, i, cfg, symbol, debug=True):
+            score = calculate_score(df, i)
+            local_candidates.append({
+                "Symbol": symbol,
+                "Score": score,
+                "Price": float(df["Close"].iloc[-1]),
+                "Volume": int(df["Volume"].iloc[-1]),
+                "RS": round(df["RS"].iloc[-1], 3)
+            })
+        progress.progress((row + 1) / len(symbols))
+        row = row + 1
+    return local_candidates
+
+#=========== display candidates ========
+def display_candidates(candidates, index_file):
+    TOP_N = 10
+
+    df_final = pd.DataFrame()
+
+    if candidates:
+        df_candidates = pd.DataFrame(candidates)
+        df_candidates = df_candidates.sort_values(by="Score", ascending=False)
+        df_final = df_candidates.head(TOP_N)
+
+    # ===== DISPLAY =====
+    if not df_final.empty:
+        st.success(f"Top {TOP_N} Elite Setups {index_file}")
+        st.dataframe(df_final, use_container_width=True)
+    else:
+        st.warning("No elite setups today")
 
 # ================= STRATEGY =================
 # def check_entry(df, market, config):
@@ -213,51 +258,17 @@ else:
     # st.stop()
 
 # ===== SCAN =====
-candidates = []
 cfg = CONFIG.copy()
 cfg["MARKET"] = selected_market
-row = 0
-for symbol in symbols:
 
-    df = fetch_stock(symbol)
+candidates = fetch_candidates(symbols)
 
-    if df is None:
-        continue
+display_candidates(candidates, "TOP Index")
 
-    df = add_relative_strength(df, index_df)
-
-    i = len(df) - 1
-    print(f"checking {symbol}")
-    if check_entry(df, i, cfg, symbol, debug=True):
-        score = calculate_score(df, i)
-        candidates.append({
-            "Symbol": symbol,
-            "Score": score,
-            "Price": float(df["Close"].iloc[-1]),
-            "Volume": int(df["Volume"].iloc[-1]),
-            "RS": round(df["RS"].iloc[-1], 3)
-        })
-    progress.progress((row + 1) / len(symbols))
-    row = row + 1
-
-TOP_N = 10
-
-df_final = pd.DataFrame()
-
-if candidates:
-    df_candidates = pd.DataFrame(candidates)
-    df_candidates = df_candidates.sort_values(by="Score", ascending=False)
-    df_final = df_candidates.head(TOP_N)
-
-# ===== DISPLAY =====
-if not df_final.empty:
-    st.success(f"Top {TOP_N} Elite Setups")
-    st.dataframe(df_final, use_container_width=True)
-else:
-    st.warning("No elite setups today")
-
-
-
+if selected_market == "INDIA":
+    symbols = load_market_symbols_from_file("nifty_small_100.csv")
+    candidates = fetch_candidates(symbols)
+    display_candidates(candidates, "TOP Index")
 
 # ===== AUTO REFRESH =====
 st.caption(f"Auto refresh every {REFRESH_SECONDS}s")
