@@ -48,7 +48,7 @@ def load_market_symbols_from_file(filename):
     if not os.path.exists(path):
         print(f"⚠️ Missing file: {filename}")
         return []
-
+    print(f"⚠️ Loading file: {filename} {path}")
     try:
         df = pd.read_csv(path)
         df.columns = [c.strip().lower() for c in df.columns]

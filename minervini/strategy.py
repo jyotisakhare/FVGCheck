@@ -157,7 +157,7 @@ def check_entry_india(df, i, cfg, debug=False):
         return False
 
     # avoid chasing
-    if row["Close"] > 1.06 * prev_high:
+    if row["Close"] > 1.06 * prev_high and not is_bull_snort_breakout(df):
         if debug: print("FAIL avoid chasing 2")
         return False
 
@@ -225,3 +225,39 @@ def check_entry_india(df, i, cfg, debug=False):
     #     return False
 
     return True
+
+def is_bull_snort_breakout(df,
+                          lookback=20,
+                          vol_mult=2.5,
+                          close_strength=0.7):
+    """
+    Detects a 'bull snort breakout':
+    - Breakout above recent high
+    - Volume spike
+    - Strong close near high
+    """
+
+    if len(df) < lookback + 2:
+        return False
+
+    latest = df.iloc[-1]
+    prev = df.iloc[-2]
+
+    # --- 1. Breakout above recent high ---
+    recent_high = df['High'].iloc[-lookback-1:-1].max()
+    breakout = latest['Close'] > recent_high
+
+    # --- 2. Volume spike ---
+    avg_vol = df['Volume'].iloc[-lookback-1:-1].mean()
+    vol_spike = latest['Volume'] >= vol_mult * avg_vol
+
+    # --- 3. Strong close (close near high of candle) ---
+    candle_range = latest['High'] - latest['Low']
+    if candle_range == 0:
+        return False
+
+    close_position = (latest['Close'] - latest['Low']) / candle_range
+    strong_close = close_position >= close_strength
+
+    # --- Final condition ---
+    return breakout and vol_spike and strong_close
