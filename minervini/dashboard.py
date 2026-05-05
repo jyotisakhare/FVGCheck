@@ -265,12 +265,57 @@ candidates = fetch_candidates(symbols)
 display_candidates(candidates, "TOP Index")
 
 if selected_market == "INDIA":
-    symbols = load_market_symbols_from_file("nifty_small_100.csv")
-    candidates = fetch_candidates(symbols)
-    display_candidates(candidates, "small cap")
-    symbols = load_market_symbols_from_file("nifty_mid_100.csv")
-    candidates = fetch_candidates(symbols)
-    display_candidates(candidates, "mid cap")
+# ================= SINGLE STOCK CHECK =================
+    st.markdown("---")
+    st.subheader("🔍 Check Small and mid cap")
+    if st.button("Check Small mid cap"):
+        symbols = load_market_symbols_from_file("nifty_small_100.csv")
+        candidates = fetch_candidates(symbols)
+        display_candidates(candidates, "small cap")
+        symbols = load_market_symbols_from_file("nifty_mid_100.csv")
+        candidates = fetch_candidates(symbols)
+        display_candidates(candidates, "mid cap")
+
+
+# ================= SINGLE STOCK CHECK =================
+st.markdown("---")
+st.subheader("🔍 Check Single Stock")
+
+input_symbol = st.text_input("Enter Symbol (e.g. RELIANCE.NS or AAPL)")
+
+if st.button("Check Entry"):
+
+    if input_symbol.strip() == "":
+        st.warning("Please enter a valid symbol")
+    else:
+        df = fetch_stock(input_symbol)
+
+        if df is None:
+            st.error("❌ Not enough data / invalid symbol")
+        else:
+            # add RS
+            df = add_relative_strength(df, index_df)
+
+            i = len(df) - 1
+
+            is_valid = check_entry(df, i, cfg, input_symbol, debug=True)
+
+            if is_valid:
+                score = calculate_score(df, i)
+
+                st.success(f"✅ TRUE — Good to Enter")
+
+                st.write({
+                    "Symbol": input_symbol,
+                    "Score": round(score, 2),
+                    "Price": float(df["Close"].iloc[-1]),
+                    "Volume": int(df["Volume"].iloc[-1]),
+                    "RS": round(df["RS"].iloc[-1], 3)
+                })
+
+            else:
+                st.error("❌ FALSE — Not a valid setup")
+
 
 # ===== AUTO REFRESH =====
 st.caption(f"Auto refresh every {REFRESH_SECONDS}s")
