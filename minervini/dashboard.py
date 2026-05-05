@@ -5,8 +5,7 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 import time
-from symbol_loader import load_market_symbols
-from symbol_loader import load_market_symbols_from_file
+from symbol_loader import *
 from strategy import check_entry
 from features import add_relative_strength
 from config import CONFIG
