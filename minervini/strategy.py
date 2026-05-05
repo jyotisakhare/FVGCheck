@@ -116,6 +116,7 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
     candle_range = row["High"] - row["Low"]
 
     if candle_range <= 0:
+        if debug: print("FAIL BREAKOUT STRENGTH")
         return False
 
     strength = (row["Close"] - row["Low"]) / candle_range
@@ -206,6 +207,7 @@ def check_entry_india(df, i, cfg, debug=False):
 
     # expansion candle
     if (row["High"] - row["Low"]) < 1.2 * (df["High"] - df["Low"]).rolling(10).mean().iloc[i]:
+        if debug: print("FAIL expansion candle")
         return False
 
     # tight base BEFORE breakout

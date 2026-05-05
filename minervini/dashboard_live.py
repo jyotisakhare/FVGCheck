@@ -38,7 +38,7 @@ def fetch_symbol(symbol):
 # ================= CONFIG =================
 DATA_PATH = "data"
 POSITIONS_FILE = "minervini/positions.csv"
-REFRESH = 60
+REFRESH = 300
 
 st.set_page_config(layout="wide")
 st.title("🚀 Live Pro Dashboard")

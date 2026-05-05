@@ -94,7 +94,7 @@ def display_candidates(candidates, index_file):
     # ===== DISPLAY =====
     if not df_final.empty:
         st.success(f"Top {TOP_N} Elite Setups {index_file}")
-        st.dataframe(df_final, use_container_width=True)
+        st.dataframe(df_final, width='stretch')
     else:
         st.warning(f"No elite setups today {index_file}")
 
@@ -318,6 +318,6 @@ if st.button("Check Entry"):
 
 
 # ===== AUTO REFRESH =====
-st.caption(f"Auto refresh every {REFRESH_SECONDS}s")
-time.sleep(REFRESH_SECONDS)
-st.rerun()
+# st.caption(f"Auto refresh every {REFRESH_SECONDS}s")
+# time.sleep(REFRESH_SECONDS)
+# st.rerun()
