@@ -184,7 +184,6 @@ def display_results(results):
             st.dataframe(fallback, use_container_width=True)
 
 # ================= LOAD SYMBOLS =================
-@st.cache_data(ttl=14400)
 def load_symbols(filename):
     df = pd.read_csv(filename)
     return df["Symbol"].dropna().unique().tolist()
