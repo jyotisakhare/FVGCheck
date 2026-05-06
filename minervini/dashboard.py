@@ -173,7 +173,7 @@ def display_candidates(candidates, index_file):
 #     return True
 
 # ================= FETCH STOCK =================
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=1500)
 def fetch_stock(symbol):
 
     try:
