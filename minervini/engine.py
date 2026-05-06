@@ -90,9 +90,6 @@ def run_backtest(data, cfg):
                 print(repr(e))
                 continue
 
-        # ===== DEBUG (optional) =====
-        print(f"{date} → candidates: {len(candidates)}")
-
         # ================= RANK =================
         candidates.sort(key=lambda x: x[1], reverse=True)
 

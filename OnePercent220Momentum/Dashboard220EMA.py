@@ -242,7 +242,7 @@ for i, symbol in enumerate(symbols):
 # ================= UI =================
 st.title("🚀 Advanced Momentum Dashboard US")
 
-symbolsUS = load_symbols("minervini/nasdaq.csv")
+symbolsUS = load_symbols("nasdaq.csv")
 
 resultsUS = []
 progressUS = st.progress(0)

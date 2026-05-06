@@ -134,6 +134,12 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
 
 def check_entry_india(df, i, cfg, debug=False):
 
+    if detect_vcp_breakout(df, debug=True):
+        if debug: print("VCP BREAKOUT")
+
+    if check_200ema_touch_and_near_high(df, debug=True):
+        if debug: print("200 ema")
+
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
         if debug: print("FAIL RS_LOOKBACK")
         return False
@@ -261,3 +267,112 @@ def is_bull_snort_breakout(df,
 
     # --- Final condition ---
     return breakout and vol_spike and strong_close
+
+
+def detect_vcp_breakout(df, debug=False):
+    """
+    df must have columns: ['Open', 'High', 'Low', 'Close', 'Volume']
+    timeframe: ~1 year daily data
+    """
+
+    df = df.copy()
+
+    # --- 1. Moving averages for trend ---
+    df["ema20"] = df["Close"].ewm(span=20).mean()
+    df["ema50"] = df["Close"].ewm(span=50).mean()
+
+    # Uptrend condition
+    if not (df["Close"].iloc[-1] > df["ema20"].iloc[-1] > df["ema50"].iloc[-1]):
+        if debug: print("FAIL: No uptrend")
+        return False
+
+    # --- 2. Identify swing highs/lows ---
+    window = 5
+    df["swing_high"] = df["High"][(df["High"].rolling(window, center=True).max() == df["High"])]
+    df["swing_low"] = df["Low"][(df["Low"].rolling(window, center=True).min() == df["Low"])]
+
+    swing_highs = df.dropna(subset=["swing_high"])["swing_high"]
+    swing_lows = df.dropna(subset=["swing_low"])["swing_low"]
+
+    if len(swing_highs) < 3 or len(swing_lows) < 3:
+        if debug: print("FAIL: Not enough swings")
+        return False
+
+    # --- 3. Contraction check (ranges getting tighter) ---
+    ranges = []
+
+    for i in range(1, min(4, len(swing_highs))):
+        high = swing_highs.iloc[-i]
+        low = swing_lows.iloc[-i]
+        ranges.append((high - low) / low)
+
+    # Check decreasing volatility
+    if not all(x > y for x, y in zip(ranges, ranges[1:])):
+        if debug: print("FAIL: No contraction")
+        return False
+
+    # --- 4. Volume contraction ---
+    recent_vol = df["Volume"].tail(20).mean()
+    past_vol = df["Volume"].tail(60).head(40).mean()
+
+    if not (recent_vol < past_vol):
+        if debug: print("FAIL: Volume not drying")
+        return False
+
+    # --- 5. Breakout ---
+    resistance = swing_highs.iloc[-3:].max()
+    latest_close = df["Close"].iloc[-1]
+    breakout_volume = df["Volume"].iloc[-1]
+
+    avg_volume = df["Volume"].tail(20).mean()
+
+    if latest_close > resistance and breakout_volume > 1.5 * avg_volume:
+        if debug: print("PASS: VCP Breakout detected")
+        return True
+
+    if debug: print("FAIL: No breakout")
+    return False
+
+
+def check_200ema_touch_and_near_high(df, debug=False):
+    """
+    df must have: ['Open', 'High', 'Low', 'Close']
+    timeframe: at least 1 year daily data
+    """
+
+    df = df.copy()
+
+    # --- 1. Calculate 200 EMA ---
+    df["ema200"] = df["Close"].ewm(span=200).mean()
+
+    # --- 2. Check touch in last 100 days ---
+    recent = df.tail(100)
+
+    # Define "touch" as within 2% of EMA (important tweak)
+    recent["ema_diff_pct"] = abs(recent["Close"] - recent["ema200"]) / recent["ema200"]
+
+    touched_ema = (recent["ema_diff_pct"] < 0.02).any()
+
+    if not touched_ema:
+        if debug: print("FAIL: No EMA200 touch in last 100 days")
+        return False
+
+    # --- 3. 52-week high ---
+    high_52w = df["High"].tail(252).max()
+
+    current_price = df["Close"].iloc[-1]
+
+    # Within 5% of high
+    near_high = current_price >= 0.97 * high_52w
+
+    if not near_high:
+        if debug: print("FAIL k: Not near 52-week high")
+        return False
+
+    if debug:
+        print("PASS:")
+        print(f"Current Price: {current_price}")
+        print(f"52W High: {high_52w}")
+        print(f"Distance from High: {(high_52w - current_price)/high_52w:.2%}")
+
+    return True
