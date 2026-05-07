@@ -108,6 +108,34 @@ def fetch_vcp_candidates(symbols) :
         row = row + 1
     return local_candidates
 
+# =========== check 200 EMA cross candidates =========
+def fetch_200_ema_candidates(symbols) :
+    row = 0
+    local_candidates = []
+    for symbol in symbols:
+
+        df = fetch_stock(symbol)
+
+        if df is None:
+            continue
+
+        df = add_relative_strength(df, index_df)
+
+        i = len(df) - 1
+        print(f"checking {symbol}")
+        if check_200ema_touch_and_near_high(df, i, debug=True):
+            score = calculate_score(df, i)
+            local_candidates.append({
+                "Symbol": symbol,
+                "Score": score,
+                "Price": float(df["Close"].iloc[-1]),
+                "Volume": int(df["Volume"].iloc[-1]),
+                "RS": round(df["RS"].iloc[-1], 3)
+            })
+        progress.progress((row + 1) / len(symbols))
+        row = row + 1
+    return local_candidates
+
 #=========== display candidates ========
 def display_candidates(candidates, index_file):
     TOP_N = 10
@@ -213,9 +241,9 @@ else:
 cfg = CONFIG.copy()
 cfg["MARKET"] = selected_market
 
-candidates = fetch_candidates(symbols)
-
-display_candidates(candidates, "TOP Index")
+if st.button("Load momentum Stocks"):
+    candidates = fetch_candidates(symbols)
+    display_candidates(candidates, "TOP Index")
 
 if selected_market == "INDIA":
 # ================= SINGLE STOCK CHECK =================
@@ -273,6 +301,9 @@ if st.button("Check Entry"):
             else:
                 st.error("❌ FALSE — Not a valid setup")
 
+if st.button("Check 200 cross ema stocks"):
+    candidates = fetch_200_ema_candidates(symbols)
+    display_candidates(candidates, "TOP 200 EMA cross stocks")
 
 # ===== AUTO REFRESH =====
 # st.caption(f"Auto refresh every {REFRESH_SECONDS}s")

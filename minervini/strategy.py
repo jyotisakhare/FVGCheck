@@ -137,7 +137,7 @@ def check_entry_india(df, i, cfg, debug=False):
     if detect_vcp_breakout(df, debug=True):
         if debug: print("VCP BREAKOUT")
 
-    if check_200ema_touch_and_near_high(df, debug=True):
+    if check_200ema_touch_and_near_high(df,i, debug=True):
         if debug: print("200 ema")
 
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
@@ -334,12 +334,12 @@ def detect_vcp_breakout(df, debug=False):
     return False
 
 
-def check_200ema_touch_and_near_high(df, debug=False):
+def check_200ema_touch_and_near_high(df, i, debug=False):
     """
     df must have: ['Open', 'High', 'Low', 'Close']
     timeframe: at least 1 year daily data
     """
-
+    row = df.iloc[i]
     df = df.copy()
 
     # --- 1. Calculate 200 EMA ---
@@ -367,6 +367,12 @@ def check_200ema_touch_and_near_high(df, debug=False):
 
     if not near_high:
         if debug: print("FAIL k: Not near 52-week high")
+        return False
+
+        # 4. STRONG VOLUME
+    avg_vol = df["Volume"].rolling(20).mean().iloc[i]
+    if row["Volume"] < 1.3 * avg_vol:
+        if debug: print("FAIL VOLUME")
         return False
 
     if debug:
