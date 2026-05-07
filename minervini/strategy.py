@@ -137,7 +137,7 @@ def check_entry_india(df, i, cfg, debug=False):
     if detect_vcp_breakout(df, debug=True):
         if debug: print("VCP BREAKOUT")
 
-    if check_200ema_touch_and_near_high(df,i, debug=True):
+    if check_200ema_touch_and_near_high(df, i, debug=True):
         if debug: print("200 ema")
 
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
