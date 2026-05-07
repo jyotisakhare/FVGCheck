@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import time
 from symbol_loader import *
-from strategy import check_entry
+from strategy import *
 from features import add_relative_strength
 from config import CONFIG
 from features import calculate_score
@@ -80,6 +80,34 @@ def fetch_candidates(symbols) :
         row = row + 1
     return local_candidates
 
+# =========== check vsp contractions and return candidates =========
+def fetch_vcp_candidates(symbols) :
+    row = 0
+    local_candidates = []
+    for symbol in symbols:
+
+        df = fetch_stock(symbol)
+
+        if df is None:
+            continue
+
+        df = add_relative_strength(df, index_df)
+
+        i = len(df) - 1
+        print(f"checking {symbol}")
+        if detect_vcp_breakout(df, debug=True):
+            score = calculate_score(df, i)
+            local_candidates.append({
+                "Symbol": symbol,
+                "Score": score,
+                "Price": float(df["Close"].iloc[-1]),
+                "Volume": int(df["Volume"].iloc[-1]),
+                "RS": round(df["RS"].iloc[-1], 3)
+            })
+        progress.progress((row + 1) / len(symbols))
+        row = row + 1
+    return local_candidates
+
 #=========== display candidates ========
 def display_candidates(candidates, index_file):
     TOP_N = 10
@@ -98,81 +126,6 @@ def display_candidates(candidates, index_file):
     else:
         st.warning(f"No elite setups today {index_file}")
 
-# ================= STRATEGY =================
-# def check_entry(df, market, config):
-#
-#     if len(df) < 200:
-#         return False
-#
-#     row = df.iloc[-1]
-#
-#     required = ["Close", "EMA20", "EMA50", "SMA150", "VOL_AVG20"]
-#
-#     # ===== Safety checks =====
-#     for col in required:
-#         if col not in row or pd.isna(row[col]) or not np.isscalar(row[col]):
-#             return False
-#
-#     # ===== RS FILTER =====
-#     if "RS" not in df.columns or "RS_MA" not in df.columns:
-#         return False
-#
-#     rs = df["RS"].iloc[-1]
-#     rs_ma = df["RS_MA"].iloc[-1]
-#
-#     if pd.isna(rs) or pd.isna(rs_ma):
-#         return False
-#
-#     # RS must be rising
-#     if df["RS"].iloc[-1] < df["RS"].iloc[-5]:
-#         return False
-#
-#     # ===== Trend structure =====
-#     if not (
-#         float(row["Close"]) >
-#         float(row["EMA20"]) >
-#         float(row["EMA50"]) >
-#         float(row["SMA150"])
-#     ):
-#         return False
-#
-#     # ===== Breakout =====
-#     prev_high = df["Close"].rolling(252).max().iloc[-2]
-#
-#     if row["Close"] < prev_high:
-#         return False
-#
-#     # ===== Volume =====
-#     vol_mult = 1.5 if market == "US" else 1.8
-#
-#     if row["Volume"] < vol_mult * row["VOL_AVG20"]:
-#         return False
-#
-#     # ===== Breakout strength =====
-#     candle_range = row["High"] - row["Low"]
-#
-#     if candle_range == 0:
-#         return False
-#
-#     strength = (row["Close"] - row["Low"]) / candle_range
-#
-#     min_strength = 0.65 if market == "US" else 0.75
-#
-#     if strength < min_strength:
-#         return False
-#
-#     # ===== Liquidity =====
-#     liquidity = row["Close"] * row["Volume"]
-#
-#     if market == "US" and liquidity < 5e6:
-#         return False
-#
-#     if market == "INDIA" and liquidity < 2e7:
-#         return False
-#
-#     return True
-
-# ================= FETCH STOCK =================
 @st.cache_data(ttl=1500)
 def fetch_stock(symbol):
 
@@ -275,6 +228,10 @@ if selected_market == "INDIA":
         symbols = load_market_symbols_from_file("nifty_mid_100.csv")
         candidates = fetch_candidates(symbols)
         display_candidates(candidates, "mid cap")
+    if st.button("Check VCP contraction stocks"):
+        symbols = load_market_symbols_from_file("nifty500.csv")
+        candidates = fetch_vcp_candidates(symbols)
+        display_candidates(candidates, "VCP contraction stocks")
 
 
 # ================= SINGLE STOCK CHECK =================
