@@ -325,6 +325,7 @@ if st.button("Check 200 cross ema stocks"):
     all_results[selected_market+" 200 CROSS EMA"] = candidates
     display_candidates(candidates, "TOP 200 EMA cross stocks")
 
+display_all_results(final_result=all_results)
 
 # ===== AUTO REFRESH =====
 # st.caption(f"Auto refresh every {REFRESH_SECONDS}s")
