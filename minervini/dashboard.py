@@ -2,6 +2,7 @@
 
 import streamlit as st
 import yfinance as yf
+from collections import defaultdict
 import pandas as pd
 import numpy as np
 import time
@@ -23,6 +24,7 @@ INDEX_MAP = {
     "US": "^NDX",     # S&P 500
     "INDIA": "^NSEI"   # Nifty 50
 }
+all_results = defaultdict(list)
 
 # ================= DATA CLEANING =================
 def clean_df(df):
@@ -154,6 +156,20 @@ def display_candidates(candidates, index_file):
     else:
         st.warning(f"No elite setups today {index_file}")
 
+
+def display_all_results(final_result):
+    for category, items in final_result.items():
+        st.subheader(f"Category: {category}")
+
+        if items:
+            df_candidates = pd.DataFrame(items)
+            df_candidates = df_candidates.sort_values(by="Score", ascending=False)
+            df_final = df_candidates
+            # ===== DISPLAY =====
+            if not df_final.empty:
+                st.dataframe(df_final, width='stretch')
+
+
 @st.cache_data(ttl=1500)
 def fetch_stock(symbol):
 
@@ -243,6 +259,7 @@ cfg["MARKET"] = selected_market
 
 if st.button("Load momentum Stocks"):
     candidates = fetch_candidates(symbols)
+    all_results[selected_market+"Momentum minervini"].append(candidates)
     display_candidates(candidates, "TOP Index")
 
 if selected_market == "INDIA":
@@ -252,15 +269,17 @@ if selected_market == "INDIA":
     if st.button("Check Small mid cap"):
         symbols = load_market_symbols_from_file("nifty_small_100.csv")
         candidates = fetch_candidates(symbols)
+        all_results[selected_market + "Momentum minervini small cap"].append(candidates)
         display_candidates(candidates, "small cap")
         symbols = load_market_symbols_from_file("nifty_mid_100.csv")
         candidates = fetch_candidates(symbols)
+        all_results[selected_market + "Momentum minervini mid cap"].append(candidates)
         display_candidates(candidates, "mid cap")
     if st.button("Check VCP contraction stocks"):
         symbols = load_market_symbols_from_file("nifty500.csv")
         candidates = fetch_vcp_candidates(symbols)
         display_candidates(candidates, "VCP contraction stocks")
-
+        all_results[selected_market + "VCP contraction"].append(candidates)
 
 # ================= SINGLE STOCK CHECK =================
 st.markdown("---")
@@ -303,7 +322,9 @@ if st.button("Check Entry"):
 
 if st.button("Check 200 cross ema stocks"):
     candidates = fetch_200_ema_candidates(symbols)
+    all_results[selected_market+" 200 CROSS EMA"] = candidates
     display_candidates(candidates, "TOP 200 EMA cross stocks")
+
 
 # ===== AUTO REFRESH =====
 # st.caption(f"Auto refresh every {REFRESH_SECONDS}s")

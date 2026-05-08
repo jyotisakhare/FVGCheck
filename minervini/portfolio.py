@@ -57,6 +57,9 @@ class Portfolio:
         if days_held < 3:
             return False, None
 
+        # if days_held > 30 and row["Close"] < pos["entry"]:
+        #     return True, "LONG FAIL TRADE"
+
         # ===== 3. TRAILING STOP =====
         if pos["partial"]:
             if row["Close"] < cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:
