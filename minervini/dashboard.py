@@ -163,7 +163,6 @@ def display_all_results(final_result):
 
         if items:
             df_candidates = pd.DataFrame(items)
-            df_candidates = df_candidates.sort_values(by="Score", ascending=False)
             df_final = df_candidates
             # ===== DISPLAY =====
             if not df_final.empty:
