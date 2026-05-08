@@ -5,7 +5,7 @@ CONFIG = {
     "POSITION_SIZE": 0.10,
     "MAX_POSITIONS": 10,
     "TOP_N": 5,
-    "MARKET":"US",
+    "MARKET":"INDIA",
 
     # Filters
     "BREAKOUT_VOLUME_MULT": 2.0,
@@ -19,7 +19,7 @@ CONFIG = {
 
     # Exit
     "PARTIAL_PROFIT": 1.10,
-    "PARTIAL_SELL": 0.30,
+    "PARTIAL_SELL": 0.50,
     "TRAIL_INITIAL": 0.85,
     "TRAIL_AFTER_PARTIAL": 0.90,
 }

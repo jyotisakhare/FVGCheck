@@ -142,7 +142,7 @@ def check_entry_india(df, i, cfg, debug=False):
         if debug: print("VCP BREAKOUT")
         return True
 
-    if check_200ema_touch_and_near_high(df, i, debug=True):
+    if check_200ema_touch_and_near_high(df, i, debug=False):
         if debug: print("200 ema")
 
 
