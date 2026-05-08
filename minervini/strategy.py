@@ -14,10 +14,7 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
         cfg["MIN_NEAR_HIGH"] = 0.75
         cfg["RS_LOOKBACK"] = 4
         cfg["TOP_N"] = 1
-        if check_200ema_touch_and_near_high(df, i, debug=False)  and cfg["MARKET"] == "INDIA":
-            if debug: print("VCP BREAKOUT")
-            return True
-        # return check_entry_india(df, i, cfg, debug)
+        return check_entry_india(df, i, cfg, debug)
 
 
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
