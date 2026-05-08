@@ -24,7 +24,10 @@ INDEX_MAP = {
     "US": "^NDX",     # S&P 500
     "INDIA": "^NSEI"   # Nifty 50
 }
-all_results = defaultdict(list)
+
+# 1. Initialize the list in session_state if it doesn't exist
+if "all_results" not in st.session_state:
+    st.session_state.all_results = defaultdict(list)
 
 # ================= DATA CLEANING =================
 def clean_df(df):
@@ -258,7 +261,7 @@ cfg["MARKET"] = selected_market
 
 if st.button("Load momentum Stocks"):
     candidates = fetch_candidates(symbols)
-    all_results[selected_market+"Momentum minervini"].append(candidates)
+    st.session_state.all_results[selected_market+"Momentum minervini"] = candidates
     display_candidates(candidates, "TOP Index")
 
 if selected_market == "INDIA":
@@ -268,17 +271,17 @@ if selected_market == "INDIA":
     if st.button("Check Small mid cap"):
         symbols = load_market_symbols_from_file("nifty_small_100.csv")
         candidates = fetch_candidates(symbols)
-        all_results[selected_market + "Momentum minervini small cap"].append(candidates)
+        st.session_state.all_results[selected_market + "Momentum minervini small cap"] = candidates
         display_candidates(candidates, "small cap")
         symbols = load_market_symbols_from_file("nifty_mid_100.csv")
         candidates = fetch_candidates(symbols)
-        all_results[selected_market + "Momentum minervini mid cap"].append(candidates)
+        st.session_state.all_results[selected_market + "Momentum minervini mid cap"].append(candidates)
         display_candidates(candidates, "mid cap")
     if st.button("Check VCP contraction stocks"):
         symbols = load_market_symbols_from_file("nifty500.csv")
         candidates = fetch_vcp_candidates(symbols)
         display_candidates(candidates, "VCP contraction stocks")
-        all_results[selected_market + "VCP contraction"].append(candidates)
+        st.session_state.all_results[selected_market + "VCP contraction"].append(candidates)
 
 # ================= SINGLE STOCK CHECK =================
 st.markdown("---")
@@ -321,10 +324,15 @@ if st.button("Check Entry"):
 
 if st.button("Check 200 cross ema stocks"):
     candidates = fetch_200_ema_candidates(symbols)
-    all_results[selected_market+" 200 CROSS EMA"] = candidates
+    st.session_state.all_results[selected_market+" 200 CROSS EMA"] = candidates
     display_candidates(candidates, "TOP 200 EMA cross stocks")
 
-display_all_results(final_result=all_results)
+# Optional: Clear the list
+if st.button("Clear List"):
+    st.session_state.all_results = []
+    st.rerun() # Refresh the UI immediately
+
+display_all_results(final_result=st.session_state.all_results)
 
 # ===== AUTO REFRESH =====
 # st.caption(f"Auto refresh every {REFRESH_SECONDS}s")
