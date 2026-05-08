@@ -14,7 +14,10 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
         cfg["MIN_NEAR_HIGH"] = 0.75
         cfg["RS_LOOKBACK"] = 4
         cfg["TOP_N"] = 1
-        return check_entry_india(df, i, cfg, debug)
+        if check_200ema_touch_and_near_high(df, i, debug=False)  and cfg["MARKET"] == "INDIA":
+            if debug: print("VCP BREAKOUT")
+            return True
+        # return check_entry_india(df, i, cfg, debug)
 
 
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
@@ -134,15 +137,17 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
 
 def check_entry_india(df, i, cfg, debug=False):
 
-    if detect_vcp_breakout(df, debug=True):
+    if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
+        if debug: print("FAIL RS_LOOKBACK")
+        return False
+
+    if detect_vcp_breakout(df, debug= False):
         if debug: print("VCP BREAKOUT")
+        return True
 
     if check_200ema_touch_and_near_high(df, i, debug=True):
         if debug: print("200 ema")
 
-    if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
-        if debug: print("FAIL RS_LOOKBACK")
-        return False
 
     row = df.iloc[i]
 
@@ -269,17 +274,16 @@ def is_bull_snort_breakout(df,
     return breakout and vol_spike and strong_close
 
 
-def detect_vcp_breakout(df, debug=False):
+def detect_vcp_breakout(dataF, debug=False):
     """
     df must have columns: ['Open', 'High', 'Low', 'Close', 'Volume']
     timeframe: ~1 year daily data
     """
-
-    df = df.copy()
+    df = dataF.copy()
 
     # --- 1. Moving averages for trend ---
-    df["ema20"] = df["Close"].ewm(span=20).mean()
-    df["ema50"] = df["Close"].ewm(span=50).mean()
+    df.loc[:, "ema20"] = df["Close"].ewm(span=20).mean()
+    df.loc[:, "ema50"] = df["Close"].ewm(span=50).mean()
 
     # Uptrend condition
     if not (df["Close"].iloc[-1] > df["ema20"].iloc[-1] > df["ema50"].iloc[-1]):
@@ -288,11 +292,20 @@ def detect_vcp_breakout(df, debug=False):
 
     # --- 2. Identify swing highs/lows ---
     window = 5
-    df["swing_high"] = df["High"][(df["High"].rolling(window, center=True).max() == df["High"])]
-    df["swing_low"] = df["Low"][(df["Low"].rolling(window, center=True).min() == df["Low"])]
+    # Initialize columns with NaN
+    df.loc[:, "swing_high"] = float('nan')
+    df.loc[:, "swing_low"] = float('nan')
 
-    swing_highs = df.dropna(subset=["swing_high"])["swing_high"]
-    swing_lows = df.dropna(subset=["swing_low"])["swing_low"]
+    # Identify peaks and valleys using rolling logic
+    high_mask = (df["High"].rolling(window, center=True).max() == df["High"])
+    low_mask = (df["Low"].rolling(window, center=True).min() == df["Low"])
+
+    # Use .loc for safe assignment
+    df.loc[high_mask, "swing_high"] = df["High"]
+    df.loc[low_mask, "swing_low"] = df["Low"]
+
+    swing_highs = df["swing_high"].dropna()
+    swing_lows = df["swing_low"].dropna()
 
     if len(swing_highs) < 3 or len(swing_lows) < 3:
         if debug: print("FAIL: Not enough swings")
@@ -300,85 +313,97 @@ def detect_vcp_breakout(df, debug=False):
 
     # --- 3. Contraction check (ranges getting tighter) ---
     ranges = []
-
-    for i in range(1, min(4, len(swing_highs))):
+    # Use latest 3-4 swings
+    for i in range(1, min(5, len(swing_highs))):
         high = swing_highs.iloc[-i]
+        # Match with the corresponding low (this logic assumes 1:1 high-low pairs)
         low = swing_lows.iloc[-i]
         ranges.append((high - low) / low)
 
-    # Check decreasing volatility
-    if not all(x > y for x, y in zip(ranges, ranges[1:])):
-        if debug: print("FAIL: No contraction")
+    # Check for decreasing volatility (contraction)
+    # Reversing because we appended the most recent first
+    if not all(x < y for x, y in zip(ranges, ranges[1:])):
+        if debug: print(f"FAIL: No contraction. Ranges: {[f'{r:.2%}' for r in ranges]}")
         return False
 
     # --- 4. Volume contraction ---
-    recent_vol = df["Volume"].tail(20).mean()
-    past_vol = df["Volume"].tail(60).head(40).mean()
+    recent_vol = df["Volume"].iloc[-20:].mean()
+    # Past volume (rows -60 to -20)
+    past_vol = df["Volume"].iloc[-60:-20].mean()
 
     if not (recent_vol < past_vol):
-        if debug: print("FAIL: Volume not drying")
+        if debug: print(f"FAIL: Volume not drying. Recent: {recent_vol:.0f}, Past: {past_vol:.0f}")
         return False
 
     # --- 5. Breakout ---
     resistance = swing_highs.iloc[-3:].max()
     latest_close = df["Close"].iloc[-1]
     breakout_volume = df["Volume"].iloc[-1]
-
-    avg_volume = df["Volume"].tail(20).mean()
+    avg_volume = df["Volume"].iloc[-20:].mean()
 
     if latest_close > resistance and breakout_volume > 1.5 * avg_volume:
-        if debug: print("PASS: VCP Breakout detected")
+        print(f"PASS: VCP Breakout detected!")
+        print(f"Close: {latest_close} > Res: {resistance}")
         return True
 
     if debug: print("FAIL: No breakout")
+    # results with below custom config
+    # "TRAIL_INITIAL": 0.90,
+    # "TRAIL_AFTER_PARTIAL": 0.90,
+    # {'Return %': 26, 'Win Rate': 47, 'Expectancy': 3, 'avg win': 15, 'avg loss': -8, 'Max DD': -15, 'Trades': 149}
     return False
 
 
-def check_200ema_touch_and_near_high(df, i, debug=False):
+def check_200ema_touch_and_near_high(dataF, i, debug=False):
     """
     df must have: ['Open', 'High', 'Low', 'Close']
     timeframe: at least 1 year daily data
     """
-    row = df.iloc[i]
-    df = df.copy()
+    # Create a full copy to avoid modifying the original dataF
+    df = dataF.copy()
 
     # --- 1. Calculate 200 EMA ---
-    df["ema200"] = df["Close"].ewm(span=200).mean()
+    df["ema200"] = df["Close"].ewm(span=200, adjust=False).mean()
 
-    # --- 2. Check touch in last 100 days ---
-    recent = df.tail(100)
+    # --- 2. Check touch in last 100 days relative to index i ---
+    # We take the 100 rows leading up to i
+    start_idx = max(0, i - 99)
+    recent = df.iloc[start_idx: i + 1].copy()  # .copy() fixes the SettingWithCopyWarning
 
-    # Define "touch" as within 2% of EMA (important tweak)
-    recent["ema_diff_pct"] = abs(recent["Close"] - recent["ema200"]) / recent["ema200"]
-
+    # Define "touch" as within 2% of EMA
+    recent.loc[:, "ema_diff_pct"] = abs(recent["Close"] - recent["ema200"]) / recent["ema200"]
     touched_ema = (recent["ema_diff_pct"] < 0.02).any()
 
     if not touched_ema:
-        if debug: print("FAIL: No EMA200 touch in last 100 days")
+        if debug: print(f"FAIL: No EMA200 touch in last 100 days at index {i}")
         return False
 
-    # --- 3. 52-week high ---
-    high_52w = df["High"].tail(252).max()
+    # --- 3. 52-week high (relative to index i) ---
+    high_start = max(0, i - 251)
+    high_52w = df["High"].iloc[high_start: i + 1].max()
+    current_price = df["Close"].iloc[i]
 
-    current_price = df["Close"].iloc[-1]
-
-    # Within 5% of high
+    # Within 3% of high (based on your 0.97 multiplier)
     near_high = current_price >= 0.97 * high_52w
 
     if not near_high:
-        if debug: print("FAIL k: Not near 52-week high")
+        if debug: print(f"FAIL: Not near 52-week high (Price: {current_price}, High: {high_52w})")
         return False
 
-        # 4. STRONG VOLUME
-    avg_vol = df["Volume"].rolling(20).mean().iloc[i]
-    if row["Volume"] < 1.3 * avg_vol:
-        if debug: print("FAIL VOLUME")
+    # --- 4. STRONG VOLUME ---
+    # Rolling mean needs enough data before index i
+    avg_vol_series = df["Volume"].rolling(20).mean()
+    avg_vol = avg_vol_series.iloc[i]
+
+    current_vol = df["Volume"].iloc[i]
+    if current_vol < 1.3 * avg_vol:
+        if debug: print(f"FAIL VOLUME: {current_vol} < {1.3 * avg_vol:.0f}")
         return False
 
     if debug:
-        print("PASS:")
+        print(f"PASS at index {i}:")
         print(f"Current Price: {current_price}")
         print(f"52W High: {high_52w}")
-        print(f"Distance from High: {(high_52w - current_price)/high_52w:.2%}")
-
+    print(f"Distance from High: {(high_52w - current_price) / high_52w:.2%}")
+    # {'Return %': 29, 'Win Rate': 52, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -12, 'Trades': 110}
     return True
