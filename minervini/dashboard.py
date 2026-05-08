@@ -275,13 +275,13 @@ if selected_market == "INDIA":
         display_candidates(candidates, "small cap")
         symbols = load_market_symbols_from_file("nifty_mid_100.csv")
         candidates = fetch_candidates(symbols)
-        st.session_state.all_results[selected_market + "Momentum minervini mid cap"].append(candidates)
+        st.session_state.all_results[selected_market + "Momentum minervini mid cap"] = (candidates)
         display_candidates(candidates, "mid cap")
     if st.button("Check VCP contraction stocks"):
         symbols = load_market_symbols_from_file("nifty500.csv")
         candidates = fetch_vcp_candidates(symbols)
         display_candidates(candidates, "VCP contraction stocks")
-        st.session_state.all_results[selected_market + "VCP contraction"].append(candidates)
+        st.session_state.all_results[selected_market + "VCP contraction"] = (candidates)
 
 # ================= SINGLE STOCK CHECK =================
 st.markdown("---")
