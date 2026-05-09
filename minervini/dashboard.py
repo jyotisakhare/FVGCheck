@@ -322,7 +322,6 @@ if st.button("Check Entry"):
 
             else:
                 st.error(f"❌ {fail_reasons}")
-                print(*fail_reasons, sep="\n")
 
 if st.button("Check 200 cross ema stocks"):
     candidates = fetch_200_ema_candidates(symbols)
