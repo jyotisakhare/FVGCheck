@@ -39,6 +39,9 @@ if best is None or stats["Return %"] > best[0]:
 
 print("\nBEST:", best)
 # India results till 6th MAY
-# {'Return %': 37, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -11, 'Trades': 108}
+# normal
+# {'Return %': 27, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80}
+# vcp
+# 200 EMA
 # US results till 20th APR
 # {'Return %': 35, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -14, 'Trades': 122}

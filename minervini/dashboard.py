@@ -72,7 +72,8 @@ def fetch_candidates(symbols) :
 
         i = len(df) - 1
         print(f"checking {symbol}")
-        if check_entry(df, i, cfg, symbol, debug=True):
+        fail_reasons = check_entry(df, i, cfg, symbol, debug=True)
+        if fail_reasons == "":
             score = calculate_score(df, i)
             local_candidates.append({
                 "Symbol": symbol,
@@ -304,9 +305,9 @@ if st.button("Check Entry"):
 
             i = len(df) - 1
 
-            is_valid = check_entry(df, i, cfg, input_symbol, debug=True)
+            fail_reasons = check_entry(df, i, cfg, input_symbol, debug=True)
 
-            if is_valid:
+            if fail_reasons == "":
                 score = calculate_score(df, i)
 
                 st.success(f"✅ TRUE — Good to Enter")
@@ -320,7 +321,8 @@ if st.button("Check Entry"):
                 })
 
             else:
-                st.error("❌ FALSE — Not a valid setup")
+                st.error(f"❌ {fail_reasons}")
+                print(*fail_reasons, sep="\n")
 
 if st.button("Check 200 cross ema stocks"):
     candidates = fetch_200_ema_candidates(symbols)

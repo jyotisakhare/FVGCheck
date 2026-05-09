@@ -19,7 +19,7 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
 
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
         if debug: print("FAIL RS_LOOKBACK")
-        return False
+        return ("FAIL RS_LOOKBACK")
 
     row = df.iloc[i]
 
@@ -29,20 +29,20 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
     # ===== SAFETY =====
     if not all(col in df.columns for col in required):
         if debug: print("FAIL SAFETY")
-        return False
+        return ("FAIL RS_LOOKBACK")
 
     if any(pd.isna(row[col]) for col in required):
-        return False
+        return ("FAIL REQUIRED COL")
 
     # ===== TREND =====
     if not (row["Close"] > row["EMA50"] > row["SMA150"]):
         if debug: print("FAIL TREND")
-        return False
+        return ("FAIL RS_LOOKBACK")
 
     # Avoid overextended stocks
     if row["Close"] > cfg["MAX_EXTENSION"] * row["EMA50"]:
         if debug: print("FAIL EXTENSION")
-        return False
+        return ("FAIL EXTENSION")
 
     # ===== RELATIVE STRENGTH =====
     rs_now = df["RS"].iloc[i]
@@ -53,7 +53,7 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
 
     if rs_now <= rs_past:
         if debug: print("FAIL RS")
-        return False
+        return ("FAIL RS")
 
     # 3. RS ACCELERATION (STRONG EDGE)
     rs_now = df["RS"].iloc[i]
@@ -62,7 +62,7 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
 
     if not (rs_now > rs_mid > rs_past):
         if debug: print("FAIL RS ACCELERATION")
-        return False
+        return ("FAIL RS ACCELERATION")
 
 
     # ===== LIQUIDITY =====
@@ -70,12 +70,12 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
 
     if cfg["MARKET"] == "US" and liquidity < 5e6:
         if debug: print("FAIL LIQUIDITY")
-        return False
+        return ("FAIL LIQUIDITY")
 
     # ===== BREAKOUT ZONE =====
     prev_high = df["Close"].rolling(252).max().iloc[i - 1]
     if pd.isna(prev_high):
-        return False
+        return ("FAIL NO PREV HIGH")
 
     #     # 6. BASE TIGHTNESS (VERY IMPORTANT)
     # range_10 = (df["High"] - df["Low"]).rolling(10).mean().iloc[i]
@@ -93,81 +93,85 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
     # Must be near highs
     if distance < cfg["MIN_NEAR_HIGH"]:
         if debug: print("FAIL FAR FROM HIGH")
-        return False
+        return ("FAIL FAR FROM HIGH")
 
     is_breakout = row["Close"] >= prev_high
 
 
     if pd.isna(avg_vol) or avg_vol == 0:
-        return False
+        return ("FAIL NO AVG")
 
     if is_breakout:
         # strict for breakout
         if row["Volume"] < cfg["BREAKOUT_VOLUME_MULT"] * avg_vol:
             if debug: print("FAIL VOL BREAKOUT")
-            return False
+            return ("FAIL VOL BREAKOUT")
     else:
         # mild confirmation for pre-breakout
         if row["Volume"] < 1.05 * avg_vol:
             if debug: print("FAIL VOL PRE")
-            return False
+            return ("FAIL VOL PRE")
 
     # ===== BREAKOUT STRENGTH =====
     candle_range = row["High"] - row["Low"]
 
     if candle_range <= 0:
         if debug: print("FAIL BREAKOUT STRENGTH")
-        return False
+        return "FAIL BREAKOUT STRENGT"
 
     strength = (row["Close"] - row["Low"]) / candle_range
 
     if strength < cfg["BREAKOUT_STRENGTH"]:
         if debug: print("FAIL STRENGTH")
-        return False
+        return "FAIL STRENGTH"
 
     # avoid weak closes
     if row["Close"] < 0.4 * (row["High"] - row["Low"]) + row["Low"] and cfg["MARKET"] == "INDIA":
         if debug: print("FAIL WEAK CLOSE")
-        return False
+        return "FAIL WEAK CLOSE"
 
-    return True
+    return ""
 
 def check_entry_india(df, i, cfg, debug=False):
-
+    fail_reasons = ""
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
         if debug: print("FAIL RS_LOOKBACK")
-        return False
+        return ("FAIL RS_LOOKBACK")
 
-    if detect_vcp_breakout(df, debug= False):
-        if debug: print("VCP BREAKOUT")
-        return True
-
-    if check_200ema_touch_and_near_high(df, i, debug=False):
-        if debug: print("200 ema")
-
+    # change trailinitial and later
+    # if detect_vcp_breakout(df, debug= False):
+    #     if debug: print("VCP BREAKOUT")
+    #     return ""
+    # else:
+    #     return "FAIL VCP"
+    #
+    # if check_200ema_touch_and_near_high(df, i, debug=False):
+    #     if debug: print("200 ema")
+    # else:
+    #     return "faile "
 
     row = df.iloc[i]
 
     # TREND
     if not (row["Close"] > row["EMA50"] > row["SMA150"]):
         if debug: print("FAIL trend")
-        return False
+        return "FAIL trend"
 
     # BREAKOUT
     prev_high = df["Close"].rolling(252).max().iloc[i - 1]
     if pd.isna(prev_high):
         if debug: print("FAIL breakout")
-        return False
+        return "FAIL breakout"
 
         # 1. MUST BE TRUE BREAKOUT
     if row["Close"] < 1.03 * prev_high:
         if debug: print("FAIL WEAK BREAKOUT")
-        return False
+        return "FAIL WEAK BREAKOUT"
 
     # avoid chasing
     if row["Close"] > 1.06 * prev_high and not is_bull_snort_breakout(df):
         if debug: print("FAIL avoid chasing 2")
-        return False
+        return "FAIL avoid chasing 2"
 
     # RS
     rs_now = df["RS"].iloc[i]
@@ -175,48 +179,48 @@ def check_entry_india(df, i, cfg, debug=False):
 
     if rs_now <= 1.08 * rs_past:
         if debug: print("FAIL rs_now")
-        return False
+        return "FAIL rs_now"
 
 
     # TREND RISING
     if df["EMA50"].iloc[i] <= df["EMA50"].iloc[i - 5]:
         if debug: print("FAIL TREND RISING")
-        return False
+        return "FAIL TREND RISING"
 
         # ===== LIQUIDITY =====
     liquidity = row["Close"] * row["Volume"]
 
     if liquidity < 2e7:
         if debug: print("FAIL LIQUIDITY")
-        return False
+        return "FAIL LIQUIDITY"
 
     # 4. STRONG VOLUME
     avg_vol = df["Volume"].rolling(20).mean().iloc[i]
     if row["Volume"] < 1.2 * avg_vol:
         if debug: print("FAIL VOLUME")
-        return False
+        return "FAIL VOLUME"
 
     # 5. STRONG FOLLOW-THROUGH
     if row["Close"] < 0.9 * row["High"]:
         if debug: print("FAIL WEAK CLOSE")
-        return False
+        return "FAIL WEAK CLOSE"
 
     # 6. EMA TREND MUST RISE
     if df["EMA50"].iloc[i] <= df["EMA50"].iloc[i - 5]:
         if debug: print("FAIL EMA50 TREND")
-        return False
+        return "FAIL EMA50 TREND"
 
         # 3. NO OVERHEAD SUPPLY
     high_20 = df["High"].rolling(20).max().iloc[i - 1]
 
     if row["Close"] < high_20:
         if debug: print("FAIL OVERHEAD SUPPLY")
-        return False
+        return "FAIL OVERHEAD SUPPLY"
 
     # expansion candle
     if (row["High"] - row["Low"]) < 1.2 * (df["High"] - df["Low"]).rolling(10).mean().iloc[i]:
         if debug: print("FAIL expansion candle")
-        return False
+        return "FAIL expansion candle"
 
     # tight base BEFORE breakout
     # base_range = (df["High"] - df["Low"]).rolling(15).mean().iloc[i]
@@ -232,7 +236,7 @@ def check_entry_india(df, i, cfg, debug=False):
     # if row["Open"] < prev_high:
     #     return False
 
-    return True
+    return fail_reasons
 
 def is_bull_snort_breakout(df,
                           lookback=20,
@@ -347,7 +351,6 @@ def detect_vcp_breakout(dataF, debug=False):
     # results with below custom config
     # "TRAIL_INITIAL": 0.90,
     # "TRAIL_AFTER_PARTIAL": 0.90,
-    # {'Return %': 26, 'Win Rate': 47, 'Expectancy': 3, 'avg win': 15, 'avg loss': -8, 'Max DD': -15, 'Trades': 149}
     return False
 
 
@@ -402,5 +405,5 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
         print(f"Current Price: {current_price}")
         print(f"52W High: {high_52w}")
     print(f"Distance from High: {(high_52w - current_price) / high_52w:.2%}")
-    # {'Return %': 29, 'Win Rate': 52, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -12, 'Trades': 110}
+    # 2.0 0.75 {'Return %': 12, 'Win Rate': 61, 'Expectancy': 4, 'avg win': 12, 'avg loss': -9, 'Max DD': -8, 'Trades': 36}
     return True

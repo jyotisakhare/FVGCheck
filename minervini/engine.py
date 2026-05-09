@@ -74,7 +74,8 @@ def run_backtest(data, cfg):
                 continue
 
             try:
-                if check_entry(df, i, cfg, symbol, debug=False):
+                reason = check_entry(df, i, cfg, symbol, debug=False)
+                if reason == "":
                     score = calculate_score(df, i)
 
                     # skip bad scores
