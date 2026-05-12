@@ -1,3 +1,7 @@
 Symbol,Entry Date,Shares,Entry Price,Highest,Partial,Stop,Entry Index,Recom By
 FANG,04/05/2026,2,213.45,213,False,0,0,minervini
 AAPL,06/05/2026,2,286.32,286,False,0,0,minervini
+MNST,11/05/2026,2,84.29,84.29,False,0,0,200 EMA
+DDOG,11/05/2026,2,201.87,201.87,False,0,0,200 EMA
+LRCX,11/05/2026,2,299.05,299,False,0,0,200 EMA
+
