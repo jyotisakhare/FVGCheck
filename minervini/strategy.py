@@ -147,8 +147,9 @@ def check_entry_india(df, i, cfg, debug=False):
     #
     # if check_200ema_touch_and_near_high(df, i, debug=False):
     #     if debug: print("200 ema")
+    #     return ""
     # else:
-    #     return "faile "
+    #     return "failed 200 EMA"
 
     row = df.iloc[i]
 
@@ -378,8 +379,8 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
         if debug: print(f"FAIL: No EMA200 touch in last 100 days at index {i}")
         return False
 
-    # --- 3. 52-week high (relative to index i) ---
-    high_start = max(0, i - 251)
+    # --- 3. 80 days high -> 16-week high (relative to index i) ---
+    high_start = max(0, i - 80)
     high_52w = df["High"].iloc[high_start: i + 1].max()
     current_price = df["Close"].iloc[i]
 
@@ -396,7 +397,7 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
     avg_vol = avg_vol_series.iloc[i]
 
     current_vol = df["Volume"].iloc[i]
-    if current_vol < 1.3 * avg_vol:
+    if current_vol < 1.5 * avg_vol:
         if debug: print(f"FAIL VOLUME: {current_vol} < {1.3 * avg_vol:.0f}")
         return False
 
@@ -405,5 +406,7 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
         print(f"Current Price: {current_price}")
         print(f"52W High: {high_52w}")
     print(f"Distance from High: {(high_52w - current_price) / high_52w:.2%}")
-    # 2.0 0.75 {'Return %': 12, 'Win Rate': 61, 'Expectancy': 4, 'avg win': 12, 'avg loss': -9, 'Max DD': -8, 'Trades': 36}
+    # 125 days - 2.0 0.75 {'Return %': 30, 'Win Rate': 62, 'Expectancy': 6, 'avg win': 14, 'avg loss': -9, 'Max DD': -6, 'Trades': 87}
+    # 80 days high - {'Return %': 37, 'Win Rate': 63, 'Expectancy': 5, 'avg win': 13, 'avg loss': -9, 'Max DD': -6, 'Trades': 100}
+    # 251 days {'Return %': 25, 'Win Rate': 57, 'Expectancy': 5, 'avg win': 16, 'avg loss': -9, 'Max DD': -7, 'Trades': 81}
     return True
