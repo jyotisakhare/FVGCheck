@@ -189,6 +189,7 @@ def load_symbols(filename):
     return df["Symbol"].dropna().unique().tolist()
 
 # ================= FETCH DATA =================
+@st.cache_data(ttl=1500)
 def fetch_data(symbol):
     try:
         df = yf.download(symbol, period="2y", interval="1d", progress=False)
