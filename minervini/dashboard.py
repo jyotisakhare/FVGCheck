@@ -163,10 +163,11 @@ def display_candidates(candidates, index_file):
 
 def display_all_results(final_result):
     for category, items in final_result.items():
-        st.subheader(f"Category: {category}")
+        st.success(f"Category: {category} - {len(items)}")
 
         if items:
             df_candidates = pd.DataFrame(items)
+            df_candidates = df_candidates.sort_values(by="Score", ascending=False)
             df_final = df_candidates
             # ===== DISPLAY =====
             if not df_final.empty:
@@ -262,8 +263,8 @@ cfg["MARKET"] = selected_market
 
 if st.button("Load momentum Stocks"):
     candidates = fetch_candidates(symbols)
-    st.session_state.all_results[selected_market+"Momentum minervini"] = candidates
-    display_candidates(candidates, "TOP Index")
+    st.session_state.all_results[selected_market+" Momentum minervini"] = candidates
+    # display_candidates(candidates, "TOP Index")
 
 if selected_market == "INDIA":
 # ================= SINGLE STOCK CHECK =================
@@ -272,17 +273,17 @@ if selected_market == "INDIA":
     if st.button("Check Small mid cap"):
         symbols = load_market_symbols_from_file("nifty_small_100.csv")
         candidates = fetch_candidates(symbols)
-        st.session_state.all_results[selected_market + "Momentum minervini small cap"] = candidates
-        display_candidates(candidates, "small cap")
+        st.session_state.all_results[selected_market + " Momentum minervini small cap"] = candidates
+        # display_candidates(candidates, "small cap")
         symbols = load_market_symbols_from_file("nifty_mid_100.csv")
         candidates = fetch_candidates(symbols)
-        st.session_state.all_results[selected_market + "Momentum minervini mid cap"] = (candidates)
-        display_candidates(candidates, "mid cap")
+        st.session_state.all_results[selected_market + " Momentum minervini mid cap"] = (candidates)
+        # display_candidates(candidates, "mid cap")
     if st.button("Check VCP contraction stocks"):
         symbols = load_market_symbols_from_file("nifty500.csv")
         candidates = fetch_vcp_candidates(symbols)
-        display_candidates(candidates, "VCP contraction stocks")
-        st.session_state.all_results[selected_market + "VCP contraction"] = (candidates)
+        # display_candidates(candidates, "VCP contraction stocks")
+        st.session_state.all_results[selected_market + " VCP contraction"] = (candidates)
 
 # ================= SINGLE STOCK CHECK =================
 st.markdown("---")
@@ -326,7 +327,7 @@ if st.button("Check Entry"):
 if st.button("Check 200 cross ema stocks"):
     candidates = fetch_200_ema_candidates(symbols)
     st.session_state.all_results[selected_market+" 200 CROSS EMA"] = candidates
-    display_candidates(candidates, "TOP 200 EMA cross stocks")
+    # display_candidates(candidates, "TOP 200 EMA cross stocks")
 
 # Optional: Clear the list
 if st.button("Clear List"):
