@@ -37,7 +37,7 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
     # ===== TREND =====
     if not (row["Close"] > row["EMA50"] > row["SMA150"]):
         if debug: print("FAIL TREND")
-        return ("FAIL RS_LOOKBACK")
+        return ("FAIL TREND")
 
     # Avoid overextended stocks
     if row["Close"] > cfg["MAX_EXTENSION"] * row["EMA50"]:
