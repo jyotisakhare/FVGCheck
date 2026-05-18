@@ -130,7 +130,7 @@ try:
             "Days": days
         })
 
-    df_live = pd.DataFrame(results.sort(key=lambda x: x[2], reverse=True))
+    df_live = pd.DataFrame(results.sort(key=lambda x: x['PnL %'], reverse=True))
 
     st.dataframe(df_live, use_container_width=True)
 
