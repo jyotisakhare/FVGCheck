@@ -130,7 +130,8 @@ try:
             "Days": days
         })
 
-    df_live = pd.DataFrame(results.sort(key=lambda x: x['PnL %'], reverse=True))
+    results.sort(key=lambda x: x['PnL %'], reverse=True)
+    df_live = pd.DataFrame(results)
 
     st.dataframe(df_live, use_container_width=True)
 
@@ -141,6 +142,7 @@ try:
         st.dataframe(exits)
 
 except Exception as e:
+    print(e)
     st.warning(f"Portfolio error: {e}")
 
 
