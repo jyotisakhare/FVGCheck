@@ -72,6 +72,12 @@ class Portfolio:
         if pos["partial"] and row["Close"] < row["EMA50"]:
             return True, "TREND BREAK"
 
+        if pos["partial"] and row["Close"] < row["EMA50"]:
+            return True, "TREND BREAK"
+
+        if pos["partial"] and row["Close"] < row["EMA20"]:
+            return False, "About to BREAK Trend"
+
         return False, None
 
     def check_exit(self, symbol, row, i, cfg, df):
