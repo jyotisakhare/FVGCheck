@@ -1,7 +1,7 @@
 import streamlit as st
-import yfinance as yf
 import pandas as pd
 import time
+import create_new_position as cnp
 
 from config import CONFIG
 from symbol_loader import fetch_symbol
@@ -135,6 +135,9 @@ if 'df_live' in locals() and not df_live.empty:
 else:
     st.info("No active positions")
 
+if st.button("Add new position"):
+    # Add trade widget anywhere
+    cnp.trade_entry_widget()
 
 # =========================================================
 # 🔄 AUTO REFRESH

@@ -41,6 +41,8 @@ print("\nBEST:", best)
 # India results till 6th MAY
 # normal
 # {'Return %': 27, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80}
+# {'Return %': 29, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80} 24 may minervini
+# {'Return %': 33, 'Win Rate': 64, 'Expectancy': 5, 'avg win': 13, 'avg loss': -9, 'Max DD': -6, 'Trades': 102} 200 EMA
 # vcp
 # 200 EMA
 # US results till 20th APR
