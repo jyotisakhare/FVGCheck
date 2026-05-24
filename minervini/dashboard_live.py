@@ -96,8 +96,10 @@ try:
             "Symbol": symbol,
             "Price": round(row["Close"], 2),
             "PnL %": round(pnl, 2),
-            "Highest": round(pos["highest"], 2),
-            "Next Stop": round(next_stop, 2),
+            "Partial": pos["partial"],
+            "Shares": pos["shares"],
+            # "Highest": round(pos["highest"], 2),
+            # "Next Stop": round(next_stop, 2),
             "Action": action,
             "Reason": exit_reason if exit_reason else "",
             "Days": days
@@ -134,10 +136,6 @@ if 'df_live' in locals() and not df_live.empty:
 
 else:
     st.info("No active positions")
-
-if st.button("Add new position"):
-    # Add trade widget anywhere
-    cnp.trade_entry_widget()
 
 # =========================================================
 # 🔄 AUTO REFRESH

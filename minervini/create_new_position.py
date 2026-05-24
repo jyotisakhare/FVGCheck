@@ -66,6 +66,15 @@ def trade_entry_widget():
             format="%.2f"
         )
 
+        default_target = round(entry_price * 1.15, 2)
+
+        target = st.number_input(
+            "Target",
+            min_value=0.0,
+            value=default_target,
+            format="%.2f"
+        )
+
         # Default values based on entry price
         default_highest = entry_price
         default_stop = round(entry_price * 0.90, 2)
@@ -82,7 +91,7 @@ def trade_entry_widget():
             "200 EMA",
             "Trade team",
             "twitter",
-            "1% club"
+            "1% club",
             "custom"
         ]
 
@@ -108,6 +117,7 @@ def trade_entry_widget():
             "Highest": default_highest,
             "Partial": False,
             "Stop": stop,
+            "Target": target,
             "Entry Index": 0,
             "Recom By": recom_by
         }
@@ -125,4 +135,6 @@ def trade_entry_widget():
 
     df = pd.read_csv(CSV_FILE)
 
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, width="stretch")
+
+trade_entry_widget()
