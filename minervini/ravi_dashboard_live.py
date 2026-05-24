@@ -1,5 +1,4 @@
 import streamlit as st
-import yfinance as yf
 import pandas as pd
 import time
 
@@ -9,7 +8,7 @@ from portfolio import Portfolio
 
 # ================= CONFIG =================
 DATA_PATH = "data"
-POSITIONS_FILE = "minervini/positions.csv"
+POSITIONS_FILE = "minervini/ravi_positions_ind.csv"
 REFRESH = 300
 
 st.set_page_config(layout="wide")
@@ -26,9 +25,9 @@ CONFIG["MARKET"] = market
 st.header("📁 Live Portfolio "+market)
 
 if market == "INDIA":
-    POSITIONS_FILE = "minervini/positions.csv"
+    POSITIONS_FILE = "minervini/ravi_positions_ind.csv"
 else:
-    POSITIONS_FILE = "minervini/positions_us.csv"
+    POSITIONS_FILE = "minervini/ravi_positions_us.csv"
 
 try:
     positions_df = pd.read_csv(POSITIONS_FILE)

@@ -1,4 +1,5 @@
 import pandas as pd
+import yfinance as yf
 import os
 
 def load_market_symbols(base_path=""):
@@ -69,3 +70,28 @@ def load_market_symbols_from_file(filename):
         print(f"❌ Error loading {filename}: {e}")
 
     return []
+
+def fetch_symbol(symbol):
+    try:
+        df = yf.download(symbol, period="1y", interval="1d", progress=False)
+
+        if df.empty:
+            print(f"fetch_symbol failed for {symbol}")
+            return None
+
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+
+        df = df[["Open", "High", "Low", "Close", "Volume"]].copy()
+        df = df.apply(pd.to_numeric, errors="coerce")
+        df.dropna(inplace=True)
+
+        # indicators
+        df["EMA20"] = df["Close"].ewm(span=20).mean()
+        df["EMA50"] = df["Close"].ewm(span=50).mean()
+        df["SMA150"] = df["Close"].rolling(150).mean()
+
+        return df
+    except e:
+        print(f"fetch_symbol failed for {e}")
+        return None
