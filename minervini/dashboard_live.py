@@ -48,6 +48,7 @@ try:
         }
 
     results = []
+    results_trade_team = []
 
     for symbol, pos in portfolio.positions.items():
         print(f"checking live  {symbol}")
@@ -92,23 +93,40 @@ try:
 
         pnl = (row["Close"] - pos["entry"]) / pos["entry"] * 100
 
-        results.append({
-            "Symbol": symbol,
-            "Price": round(row["Close"], 2),
-            "PnL %": round(pnl, 2),
-            "Partial": pos["partial"],
-            "Shares": pos["shares"],
-            # "Highest": round(pos["highest"], 2),
-            # "Next Stop": round(next_stop, 2),
-            "Action": action,
-            "Reason": exit_reason if exit_reason else "",
-            "Days": days
-        })
+        if pos["Recom By"] == "Trade team":
+            results_trade_team.append({
+                "Symbol": symbol,
+                "Price": round(row["Close"], 2),
+                "PnL %": round(pnl, 2),
+                "Partial": pos["partial"],
+                "Shares": pos["shares"],
+                # "Highest": round(pos["highest"], 2),
+                # "Next Stop": round(next_stop, 2),
+                "Action": action,
+                "Reason": exit_reason if exit_reason else "",
+                "Days": days
+            })
+        else:
+            results.append({
+                "Symbol": symbol,
+                "Price": round(row["Close"], 2),
+                "PnL %": round(pnl, 2),
+                "Partial": pos["partial"],
+                "Shares": pos["shares"],
+                # "Highest": round(pos["highest"], 2),
+                # "Next Stop": round(next_stop, 2),
+                "Action": action,
+                "Reason": exit_reason if exit_reason else "",
+                "Days": days
+            })
 
     results.sort(key=lambda x: x['PnL %'], reverse=True)
+    results_trade_team.sort(key=lambda x: x['PnL %'], reverse=True)
     df_live = pd.DataFrame(results)
+    df_live_trade_team = pd.DataFrame(results_trade_team)
 
     st.dataframe(df_live, use_container_width=True)
+    st.dataframe(df_live_trade_team, use_container_width=True)
 
     exits = df_live[df_live["Action"] == "EXIT"]
 
