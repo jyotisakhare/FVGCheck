@@ -93,7 +93,7 @@ try:
 
         pnl = (row["Close"] - pos["entry"]) / pos["entry"] * 100
 
-        if pos["Recom By"] == "Trade team":
+        if pos["Recom By"].equals("Trade team"):
             results_trade_team.append({
                 "Symbol": symbol,
                 "Price": round(row["Close"], 2),
