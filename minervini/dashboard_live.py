@@ -45,6 +45,7 @@ try:
             "partial": r["Partial"],
             "stop": r["Stop"],
             "entry_date": r["Entry Date"],
+            "recommended_by": r["Recom By"],
         }
 
     results = []
@@ -93,7 +94,7 @@ try:
 
         pnl = (row["Close"] - pos["entry"]) / pos["entry"] * 100
 
-        if pos["Recom By"].equals("Trade team"):
+        if pos["recommended_by"] == "Trade team":
             results_trade_team.append({
                 "Symbol": symbol,
                 "Price": round(row["Close"], 2),
