@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import time
-import create_new_position as cnp
 
 from config import CONFIG
 from symbol_loader import fetch_symbol
