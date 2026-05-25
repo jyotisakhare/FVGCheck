@@ -1,11 +1,7 @@
 # dashboard_pro.py
 
 import streamlit as st
-import yfinance as yf
 from collections import defaultdict
-import pandas as pd
-import numpy as np
-import time
 from symbol_loader import *
 from strategy import *
 from features import add_relative_strength
