@@ -145,11 +145,11 @@ def check_entry_india(df, i, cfg, debug=False):
     # else:
     #     return "FAIL VCP"
     #
-    if check_200ema_touch_and_near_high(df, i, debug=False):
-        if debug: print("200 ema")
-        return ""
-    else:
-        return "failed 200 EMA"
+    # if check_200ema_touch_and_near_high(df, i, debug=False):
+    #     if debug: print("200 ema")
+    #     return ""
+    # else:
+    #     return "failed 200 EMA"
 
     row = df.iloc[i]
 
