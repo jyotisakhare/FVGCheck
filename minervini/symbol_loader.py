@@ -87,6 +87,7 @@ def fetch_symbol(symbol):
         df.dropna(inplace=True)
 
         # indicators
+        df["EMA10"] = df["Close"].ewm(span=10).mean()
         df["EMA20"] = df["Close"].ewm(span=20).mean()
         df["EMA50"] = df["Close"].ewm(span=50).mean()
         df["SMA150"] = df["Close"].rolling(150).mean()
