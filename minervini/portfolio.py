@@ -75,10 +75,10 @@ class Portfolio:
         if pos["partial"] and row["Close"] < row["EMA50"]:
             return True, "TREND BREAK"
 
-        if pos["partial"] and row["Close"] < row["EMA20"]:
+        if row["Close"] < row["EMA20"]:
             return False, "EMA20 abt 2 BREAK Trend"
 
-        if pos["partial"] and row["Close"] < row["EMA10"]:
+        if row["Close"] < row["EMA10"]:
             return False, "EMA10 abt 2 BREAK Trend"
 
         return False, None
