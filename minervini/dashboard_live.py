@@ -146,7 +146,7 @@ st.header("🧠 Risk Overview")
 
 if 'df_live' in locals() and not df_live.empty:
 
-    total_positions = len(df_live)
+    total_positions = len(df_live) + len(df_live_trade_team)
     exit_count = len(df_live[df_live["Action"] == "EXIT"])
 
     st.metric("Total Positions", total_positions)
