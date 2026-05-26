@@ -148,6 +148,7 @@ if 'df_live' in locals() and not df_live.empty:
 
     total_positions = len(df_live) + len(df_live_trade_team)
     exit_count = len(df_live[df_live["Action"] == "EXIT"])
+    exit_count = exit_count + len(df_live_trade_team[df_live_trade_team["Action"] == "EXIT"])
 
     st.metric("Total Positions", total_positions)
     st.metric("Exit Signals", exit_count)
