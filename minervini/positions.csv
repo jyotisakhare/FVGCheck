@@ -1,6 +1,5 @@
 Symbol,Entry Date,Shares,Entry Price,Highest,Partial,Stop,Entry Index,Recom By,Target
 JSWSTEEL.NS,12/02/2026,1,1245.0,1305.0,False,0.0,0,minervini,
-MOTHERSON.NS,12/02/2026,20,131.0,136.0,False,0.0,0,minervini,
 LT.NS,16/02/2026,1,4172.0,4437.0,False,0.0,0,minervini,
 RBLBANK.NS,19/02/2026,5,336.0,345.0,False,0.0,0,minervini,
 MARICO.NS,19/02/2026,1,784.0,813.0,False,0.0,0,minervini,
@@ -42,3 +41,8 @@ MANAPPURAM.NS,22/05/2026,2,323.95,0.0,False,291.0,0,minervini
 STOVEKRAFT.NS,22/05/2026,8,563.78,0.0,False,507.0,0,Trade team
 RAIN.NS,25/05/2026,20,166,0.0,True,0,0,Trade team
 NYKAA.NS,25/05/2026,18,278,0.0,False,0,0,minervini
+SAMMANCAP.NS,26/05/2026,30,169.0,169.0,False,0.0,0,minervini,
+GAIL.NS,27/05/2026,10,168.76,169.0,False,0.0,0,minervini,
+JSWENERGY.NS,27/05/2026,8,598.90,598.0,False,0.0,0,minervini,
+FACT.NS,27/05/2026,6,924.0,924.0,False,0.0,0,Trade Team,
+PSPPROJECT.NS,27/05/2026,6,869.8,869.0,False,0.0,0,Trade Team,
