@@ -78,6 +78,9 @@ class Portfolio:
         if row["Close"] < row["EMA20"]:
             return False, "EMA20 touched"
 
+        if row["Close"] < row["EMA10"]:
+            return False, "EMA10 touched"
+
         return False, None
 
     def check_exit(self, symbol, row, i, cfg, df):
@@ -107,6 +110,9 @@ class Portfolio:
 
         if row["Close"] < row["EMA20"]:
             return False, "EMA20 touched"
+
+        if row["Close"] < row["EMA10"]:
+            return False, "EMA10 touched"
 
         return False, None
 

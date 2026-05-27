@@ -117,7 +117,8 @@ try:
                 # "Next Stop": round(next_stop, 2),
                 "Action": action,
                 "Reason": exit_reason if exit_reason else "",
-                "Days": days
+                "Days": days,
+                "By": pos['recommended_by']
             })
 
     results.sort(key=lambda x: x['PnL %'], reverse=True)
@@ -148,7 +149,8 @@ if 'df_live' in locals() and not df_live.empty:
 
     total_positions = len(df_live) + len(df_live_trade_team)
     exit_count = len(df_live[df_live["Action"] == "EXIT"])
-    exit_count = exit_count + len(df_live_trade_team[df_live_trade_team["Action"] == "EXIT"])
+    if not df_live_trade_team.empty:
+        exit_count = exit_count + len(df_live_trade_team[df_live_trade_team["Action"] == "EXIT"])
 
     st.metric("Total Positions", total_positions)
     st.metric("Exit Signals", exit_count)
