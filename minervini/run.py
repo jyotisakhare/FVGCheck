@@ -43,7 +43,11 @@ print("\nBEST:", best)
 # {'Return %': 27, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80}
 # {'Return %': 29, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80} 24 may minervini
 # {'Return %': 33, 'Win Rate': 64, 'Expectancy': 5, 'avg win': 13, 'avg loss': -9, 'Max DD': -6, 'Trades': 102} 200 EMA
-# vcp
-# 200 EMA
+# 20 trades at a time with 200 EMA
+# {'Return %': 42, 'Win Rate': 58, 'Expectancy': 5, 'avg win': 15, 'avg loss': -10, 'Max DD': -7, 'Trades': 180}
+# 20 trades at a time 220 EMA exit whit 20 EMA touched
+# {'Return %': 43, 'Win Rate': 59, 'Expectancy': 4, 'avg win': 13, 'avg loss': -10, 'Max DD': -8, 'Trades': 222}
+
+
 # US results till 20th APR
 # {'Return %': 35, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -14, 'Trades': 122}

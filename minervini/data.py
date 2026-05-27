@@ -134,6 +134,7 @@ def add_indicators(df):
         df.dropna(inplace=True)
 
         # ===== MOVING AVERAGES =====
+        df["EMA10"] = df["Close"].ewm(span=10, adjust=False).mean()
         df["EMA20"] = df["Close"].ewm(span=20, adjust=False).mean()
         df["EMA50"] = df["Close"].ewm(span=50, adjust=False).mean()
         df["EMA220"] = df["Close"].ewm(span=220, adjust=False).mean()

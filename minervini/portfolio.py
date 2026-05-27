@@ -76,10 +76,7 @@ class Portfolio:
             return True, "TREND BREAK"
 
         if row["Close"] < row["EMA20"]:
-            return False, "EMA20 abt 2 BREAK Trend"
-
-        if row["Close"] < row["EMA10"]:
-            return False, "EMA10 abt 2 BREAK Trend"
+            return False, "EMA20 touched"
 
         return False, None
 
@@ -109,10 +106,7 @@ class Portfolio:
             return True, "TREND BREAK"
 
         if row["Close"] < row["EMA20"]:
-            return False, "EMA20 abt 2 BREAK Trend"
-
-        if row["Close"] < row["EMA10"]:
-            return False, "EMA10 abt 2 BREAK Trend"
+            return False, "EMA20 touched"
 
         return False, None
 
