@@ -4,7 +4,7 @@ CONFIG = {
     "INITIAL_CAPITAL": 100000,
     "POSITION_SIZE": 0.10,
     "MAX_POSITIONS": 10,
-    "TOP_N": 5,
+    "TOP_N": 2,
     "MARKET":"INDIA",
 
     # Filters

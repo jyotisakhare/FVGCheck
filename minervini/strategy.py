@@ -1,7 +1,5 @@
 # strategy.py
 import pandas as pd
-import numpy as np
-
 
 def check_entry(df, i, CONFIG, symbol, debug=False):
 
@@ -16,6 +14,11 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
         cfg["TOP_N"] = 1
         return check_entry_india(df, i, cfg, debug)
 
+    # if check_200ema_touch_and_near_high(df, i, debug=False):
+    #     if debug: print("200 ema")
+    #     return ""
+    # else:
+    #     return "failed 200 EMA"
 
     if i < max(cfg["MIN_DAYS"], cfg["RS_LOOKBACK"]):
         if debug: print("FAIL RS_LOOKBACK")

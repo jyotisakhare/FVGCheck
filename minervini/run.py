@@ -51,3 +51,7 @@ print("\nBEST:", best)
 
 # US results till 20th APR
 # {'Return %': 35, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -14, 'Trades': 122}
+# TOP 2 27 may
+# {'Return %': 33, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -13, 'Trades': 126}
+# 200 EMA top 2 with max 20 trades
+#  {'Return %': 49, 'Win Rate': 57, 'Expectancy': 6, 'avg win': 19, 'avg loss': -10, 'Max DD': -11, 'Trades': 165}
