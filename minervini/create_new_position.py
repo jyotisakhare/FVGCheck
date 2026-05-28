@@ -30,7 +30,17 @@ def append_trade(sheet_name, row_data):
 # MAIN WIDGET
 # =========================================================
 
-def trade_entry_widget(market):
+def trade_entry_widget():
+
+    # =========================================================
+    # MARKET
+    # =========================================================
+    market = st.selectbox(
+        "Market",
+        ["US", "INDIA"],
+        key="add_entry"
+    )
+
     # =====================================================
     # SHEET SELECTION
     # =====================================================
@@ -46,7 +56,7 @@ def trade_entry_widget(market):
     # =====================================================
 
     # Form
-    with st.form("trade_form", width="stretch"):
+    with st.form("trade_form"):
 
         symbol = st.text_input("Symbol", value="BANDHANBNK.NS")
 
@@ -120,30 +130,45 @@ def trade_entry_widget(market):
 
         st.success("✅ Trade saved successfully!")
 
-        # # =====================================================
-        # # DISPLAY SAVED TRADES
-        # # =====================================================
-        # st.subheader("📋 Saved Trades")
-        #
-        # try:
-        #
-        #     df = read_sheet(SHEET_NAME, gs_client)
-        #
-        #     if not df.empty:
-        #
-        #         st.dataframe(
-        #             df,
-        #             use_container_width=True
-        #         )
-        #
-        #     else:
-        #
-        #         st.info("No trades found")
-        #
-        # except Exception as e:
-        #     st.error(f"Error loading trades: {e}")
+        # =====================================================
+        # DISPLAY SAVED TRADES
+        # =====================================================
+        st.subheader("📋 Saved Trades")
 
-    # =========================================================
-    # RUN APP
-    # =========================================================
-    # trade_entry_widget("INDIA")
+        try:
+
+            df = read_sheet(
+                SHEET_NAME,
+                gs_client
+            )
+
+            if not df.empty:
+
+                # fix arrow serialization issues
+                for col in df.columns:
+                    df[col] = df[col].astype(str)
+
+                st.dataframe(
+                    df,
+                    width="stretch"
+                )
+
+            else:
+
+                st.info("No trades found")
+
+        except Exception as e:
+
+            st.error(f"Error loading trades: {e}")
+
+# =========================================================
+# RUN APP
+# =========================================================
+st.set_page_config(
+    page_title="Trade entry",
+    page_icon=":memo:", # Can be an emoji, a path to an image, or a PIL Image object
+    layout="wide",
+)
+st.title("🚀 Add Trade Entry")
+
+trade_entry_widget()

@@ -222,7 +222,11 @@ def is_market_strong(index_df):
 
 
 # ================= UI =================
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Screener",
+    page_icon=":mag:", # Can be an emoji, a path to an image, or a PIL Image object
+    layout="wide",
+)
 st.title("🚀 Momentum Scanner PRO")
 progress = st.progress(0)
 

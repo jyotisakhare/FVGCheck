@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 import time
+import sys
 
 from config import CONFIG
-from create_new_position import trade_entry_widget
 from sheetutils import connect_google_sheets, read_sheet
 from symbol_loader import fetch_symbol
 from portfolio import Portfolio
@@ -26,7 +26,11 @@ gs_client = connect_google_sheets()
 # =========================================================
 # STREAMLIT PAGE
 # =========================================================
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Live Positions",
+    page_icon=":rocket:", # Can be an emoji, a path to an image, or a PIL Image object
+    layout="wide",
+)
 
 st.title("🚀 Live Pro Dashboard")
 
@@ -251,21 +255,22 @@ try:
         df_live["Action"] == "EXIT"
     ]
 
-    exitstt = df_live_trade_team[
-        df_live_trade_team["Action"] == "EXIT"
-    ]
-
     if not exits.empty:
         st.error("🚨 Exit Signals")
         st.dataframe(exits)
 
-    if not exitstt.empty:
+    if not df_live_trade_team.empty:
+        exits_trade = df_live_trade_team[
+            df_live_trade_team["Action"] == "EXIT"
+        ]
         st.error("🚨 Exit Signals")
-        st.dataframe(exitstt)
+        st.dataframe(exits_trade)
 
 except Exception as e:
-
-    st.warning(f"Portfolio error: {e}")
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    file_name = exc_tb.tb_frame.f_code.co_filename
+    print(f"Exception [{exc_type.__name__}] in {file_name} at line {exc_tb.tb_lineno}: {e}")
+    st.warning(f"Exception [{exc_type.__name__}] in {file_name} at line {exc_tb.tb_lineno}: {e}")
 
 # =========================================================
 # RISK OVERVIEW
@@ -284,7 +289,6 @@ if 'df_live' in locals() and not df_live.empty:
     )
 
     if not df_live_trade_team.empty:
-
         exit_count += len(
             df_live_trade_team[
                 df_live_trade_team["Action"] == "EXIT"
@@ -304,9 +308,6 @@ if 'df_live' in locals() and not df_live.empty:
 else:
 
     st.info("No active positions")
-
-if st.button("Add entry"):
-    trade_entry_widget(market)
 
 # =========================================================
 # AUTO REFRESH
