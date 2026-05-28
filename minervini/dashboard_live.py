@@ -251,6 +251,10 @@ try:
         df_live["Action"] == "EXIT"
     ]
 
+    exits.append(df_live_trade_team[
+        df_live_trade_team["Action"] == "EXIT"
+    ])
+
     if not exits.empty:
 
         st.error("🚨 Exit Signals")
