@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
-import gspread
 import time
 
-from google.oauth2.service_account import Credentials
-
 from config import CONFIG
+from create_new_position import trade_entry_widget
+from sheetutils import connect_google_sheets, read_sheet
 from symbol_loader import fetch_symbol
 from portfolio import Portfolio
 
@@ -21,38 +20,8 @@ US_SHEET = "positions_us"
 # =========================================================
 # GOOGLE SHEETS CONNECTION
 # =========================================================
-@st.cache_resource
-def connect_google_sheets():
-
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive"
-    ]
-
-    credentials = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=scope
-    )
-
-    client = gspread.authorize(credentials)
-
-    return client
-
 
 gs_client = connect_google_sheets()
-
-# =========================================================
-# READ GOOGLE SHEET
-# =========================================================
-def read_sheet(sheet_name):
-
-    sheet = gs_client.open(sheet_name).sheet1
-
-    data = sheet.get_all_records()
-
-    df = pd.DataFrame(data)
-
-    return df
 
 # =========================================================
 # STREAMLIT PAGE
@@ -66,7 +35,8 @@ st.title("🚀 Live Pro Dashboard")
 # =========================================================
 market = st.selectbox(
     "Market",
-    ["US", "INDIA"]
+    ["US", "INDIA"],
+    key="market_select1"
 )
 
 CONFIG["MARKET"] = market
@@ -89,7 +59,7 @@ try:
     # =====================================================
     # READ GOOGLE SHEET
     # =====================================================
-    positions_df = read_sheet(SHEET_NAME)
+    positions_df = read_sheet(SHEET_NAME, gs_client)
 
     positions_df["Entry Date"] = pd.to_datetime(
         positions_df["Entry Date"],
@@ -220,7 +190,7 @@ try:
             "Partial": pos["partial"],
             "Shares": pos["shares"],
             "Action": action,
-            # "Highest": round(pos["highest"], 2),
+            "Highest": round(pos["highest"], 2),
             "Next Stop": round(next_stop, 2),
             "Reason": exit_reason if exit_reason else "",
             "Days": days
@@ -328,6 +298,9 @@ if 'df_live' in locals() and not df_live.empty:
 else:
 
     st.info("No active positions")
+
+if st.button("Add entry"):
+    trade_entry_widget(market)
 
 # =========================================================
 # AUTO REFRESH

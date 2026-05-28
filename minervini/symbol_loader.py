@@ -1,6 +1,7 @@
 import pandas as pd
 import yfinance as yf
 import os
+import streamlit as st
 
 def load_market_symbols(base_path=""):
     market_files = {
@@ -71,6 +72,7 @@ def load_market_symbols_from_file(filename):
 
     return []
 
+@st.cache_data(ttl=1500)
 def fetch_symbol(symbol):
     try:
         df = yf.download(symbol, period="1y", interval="1d", progress=False)

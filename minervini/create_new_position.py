@@ -1,55 +1,49 @@
 # app.py
 
 import streamlit as st
-import pandas as pd
-import os
 
-def trade_entry_widget():
-    # Get all CSV files in current folder
-    csv_files = ["minervini/positions.csv","minervini/positions_us.csv", "minervini/ravi_positions_ind.csv","minervini/ravi_positions_us.csv"]
+from sheetutils import connect_google_sheets, read_sheet
 
-    # If no CSV files exist, create default one
-    if len(csv_files) == 0:
-        default_file = "minervini/positions.csv"
+# =========================================================
+# GOOGLE SHEETS CONFIG
+# =========================================================
+INDIA_SHEET = "positions"
 
-        pd.DataFrame(columns=[
-            "Symbol",
-            "Entry Date",
-            "Shares",
-            "Entry Price",
-            "Highest",
-            "Partial",
-            "Stop",
-            "Entry Index",
-            "Recom By"
-        ]).to_csv(default_file, index=False)
+US_SHEET = "positions_us"
 
-        csv_files = [default_file]
+# =========================================================
+# GOOGLE SHEETS CONNECTION
+# =========================================================
+
+gs_client = connect_google_sheets()
+
+# =========================================================
+# APPEND ROW TO SHEET
+# =========================================================
+def append_trade(sheet_name, row_data):
+
+    sheet = gs_client.open(sheet_name).sheet1
+
+    sheet.append_row(row_data)
+
+# =========================================================
+# MAIN WIDGET
+# =========================================================
+
+def trade_entry_widget(market):
+    # =====================================================
+    # SHEET SELECTION
+    # =====================================================
+    if market == "INDIA":
+        SHEET_NAME = INDIA_SHEET
+    else:
+        SHEET_NAME = US_SHEET
 
     st.title("📈 Trade Entry App")
 
-    # CSV selector
-    selected_csv = st.selectbox(
-        "📂 Select CSV File",
-        csv_files
-    )
-
-    CSV_FILE = selected_csv
-
-    # Create CSV file if not exists
-    if not os.path.exists(CSV_FILE):
-        df = pd.DataFrame(columns=[
-            "Symbol",
-            "Entry Date",
-            "Shares",
-            "Entry Price",
-            "Highest",
-            "Partial",
-            "Stop",
-            "Entry Index",
-            "Recom By"
-        ])
-        df.to_csv(CSV_FILE, index=False)
+    # =====================================================
+    # FORM
+    # =====================================================
 
     # Form
     with st.form("trade_form", width="stretch"):
@@ -109,32 +103,47 @@ def trade_entry_widget():
     # Save data
     if submitted:
 
-        new_data = {
-            "Symbol": symbol,
-            "Entry Date": entry_date.strftime("%d/%m/%Y"),
-            "Shares": shares,
-            "Entry Price": entry_price,
-            "Highest": default_highest,
-            "Partial": False,
-            "Stop": stop,
-            "Target": target,
-            "Entry Index": 0,
-            "Recom By": recom_by
-        }
+        row_data = [
+            symbol,
+            entry_date.strftime("%d/%m/%Y"),
+            shares,
+            entry_price,
+            default_highest,
+            False,
+            stop,
+            0,
+            recom_by,
+            target
+        ]
 
-        df = pd.read_csv(CSV_FILE)
-
-        df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-
-        df.to_csv(CSV_FILE, index=False)
+        append_trade(SHEET_NAME, row_data)
 
         st.success("✅ Trade saved successfully!")
 
-    # Display existing trades
-    st.subheader("📋 Saved Trades")
+        # # =====================================================
+        # # DISPLAY SAVED TRADES
+        # # =====================================================
+        # st.subheader("📋 Saved Trades")
+        #
+        # try:
+        #
+        #     df = read_sheet(SHEET_NAME, gs_client)
+        #
+        #     if not df.empty:
+        #
+        #         st.dataframe(
+        #             df,
+        #             use_container_width=True
+        #         )
+        #
+        #     else:
+        #
+        #         st.info("No trades found")
+        #
+        # except Exception as e:
+        #     st.error(f"Error loading trades: {e}")
 
-    df = pd.read_csv(CSV_FILE)
-
-    st.dataframe(df, width="stretch")
-
-trade_entry_widget()
+    # =========================================================
+    # RUN APP
+    # =========================================================
+    # trade_entry_widget("INDIA")
