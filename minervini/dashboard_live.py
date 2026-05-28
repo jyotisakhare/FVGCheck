@@ -251,7 +251,7 @@ try:
         df_live["Action"] == "EXIT"
     ]
 
-    exits.append(df_live_trade_team[
+    exitstt = (df_live_trade_team[
         df_live_trade_team["Action"] == "EXIT"
     ])
 
@@ -260,6 +260,12 @@ try:
         st.error("🚨 Exit Signals")
 
         st.dataframe(exits)
+
+    if not exitstt.empty:
+
+        st.error("🚨 Exit Signals")
+
+        st.dataframe(exitstt)
 
 except Exception as e:
 
