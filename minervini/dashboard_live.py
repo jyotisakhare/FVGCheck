@@ -236,12 +236,12 @@ try:
     # =====================================================
     st.dataframe(
         df_live,
-        use_container_width=True
+        width="stretch"
     )
 
     st.dataframe(
         df_live_trade_team,
-        use_container_width=True
+        width="stretch"
     )
 
     # =====================================================
