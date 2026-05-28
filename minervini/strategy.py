@@ -408,7 +408,7 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
         print(f"PASS at index {i}:")
         print(f"Current Price: {current_price}")
         print(f"52W High: {high_52w}")
-    print(f"Distance from High: {(high_52w - current_price) / high_52w:.2%}")
+        print(f"Distance from High: {(high_52w - current_price) / high_52w:.2%}")
     # 125 days - 2.0 0.75 {'Return %': 30, 'Win Rate': 62, 'Expectancy': 6, 'avg win': 14, 'avg loss': -9, 'Max DD': -6, 'Trades': 87}
     # 80 days high - {'Return %': 37, 'Win Rate': 63, 'Expectancy': 5, 'avg win': 13, 'avg loss': -9, 'Max DD': -6, 'Trades': 100}
     # 251 days {'Return %': 25, 'Win Rate': 57, 'Expectancy': 5, 'avg win': 16, 'avg loss': -9, 'Max DD': -7, 'Trades': 81}

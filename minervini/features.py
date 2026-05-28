@@ -26,5 +26,5 @@ def calculate_score(df, i):
         proximity * 0.2 +
         rs * 0.25
     )
-    print(f" → score: {score}")
+    # print(f" → score: {score}")
     return round(score, 3)

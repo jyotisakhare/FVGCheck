@@ -2,8 +2,11 @@ import yfinance as yf
 import pandas as pd
 import os
 
-SAVE_DIR = "../data_us"
-SYMBOL_FILE = "nasdaq.csv"   # one column: Symbol
+# SAVE_DIR = "../data_us"
+# SYMBOL_FILE = "nasdaq.csv"
+
+SAVE_DIR = "../data_ind"
+SYMBOL_FILE = "nifty200.csv"   # one column: Symbol
 
 os.makedirs(SAVE_DIR, exist_ok=True)
 
@@ -48,7 +51,7 @@ def download_symbol(symbol):
 
         df = yf.download(
             symbol,
-            period="5y",
+            period="3y",
             interval="1d",
             auto_adjust=False,
             progress=False
