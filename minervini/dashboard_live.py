@@ -1,11 +1,9 @@
 import streamlit as st
 import pandas as pd
+import gspread
 import time
-import io
 
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseDownload
+from google.oauth2.service_account import Credentials
 
 from config import CONFIG
 from symbol_loader import fetch_symbol
@@ -16,56 +14,43 @@ from portfolio import Portfolio
 # =========================================================
 REFRESH = 300
 
-# GOOGLE DRIVE FILE IDS
-INDIA_FILE_ID = "150IbwjtX9yRJHfZqMBUNfTG-Nu2w5LKc"
-US_FILE_ID = "1rvdZ6glWzJompV70--pnKwXN2OmlDFsF"
+# GOOGLE SHEET NAMES
+INDIA_SHEET = "positions"
+US_SHEET = "positions_us"
 
 # =========================================================
-# GOOGLE DRIVE CONNECTION
+# GOOGLE SHEETS CONNECTION
 # =========================================================
 @st.cache_resource
-def connect_drive():
+def connect_google_sheets():
 
-    credentials = service_account.Credentials.from_service_account_info(
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+
+    credentials = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
-        scopes=["https://www.googleapis.com/auth/drive"]
+        scopes=scope
     )
 
-    service = build(
-        "drive",
-        "v3",
-        credentials=credentials
-    )
+    client = gspread.authorize(credentials)
 
-    return service
+    return client
 
 
-drive_service = connect_drive()
+gs_client = connect_google_sheets()
 
 # =========================================================
-# READ CSV FROM GOOGLE DRIVE
+# READ GOOGLE SHEET
 # =========================================================
-def read_csv_from_drive(file_id):
+def read_sheet(sheet_name):
 
-    request = drive_service.files().get_media(
-        fileId=file_id
-    )
+    sheet = gs_client.open(sheet_name).sheet1
 
-    file_data = io.BytesIO()
+    data = sheet.get_all_records()
 
-    downloader = MediaIoBaseDownload(
-        file_data,
-        request
-    )
-
-    done = False
-
-    while not done:
-        status, done = downloader.next_chunk()
-
-    file_data.seek(0)
-
-    df = pd.read_csv(file_data)
+    df = pd.DataFrame(data)
 
     return df
 
@@ -87,12 +72,12 @@ market = st.selectbox(
 CONFIG["MARKET"] = market
 
 # =========================================================
-# SELECT FILE
+# SELECT SHEET
 # =========================================================
 if market == "INDIA":
-    FILE_ID = INDIA_FILE_ID
+    SHEET_NAME = INDIA_SHEET
 else:
-    FILE_ID = US_FILE_ID
+    SHEET_NAME = US_SHEET
 
 # =========================================================
 # LIVE PORTFOLIO
@@ -102,9 +87,9 @@ st.header(f"📁 Live Portfolio {market}")
 try:
 
     # =====================================================
-    # READ CSV
+    # READ GOOGLE SHEET
     # =====================================================
-    positions_df = read_csv_from_drive(FILE_ID)
+    positions_df = read_sheet(SHEET_NAME)
 
     positions_df["Entry Date"] = pd.to_datetime(
         positions_df["Entry Date"],
@@ -132,6 +117,7 @@ try:
         }
 
     results = []
+
     results_trade_team = []
 
     # =====================================================
@@ -150,12 +136,17 @@ try:
 
         i = len(df) - 1
 
-        # update highest
+        # =================================================
+        # UPDATE HIGHEST
+        # =================================================
         pos["highest"] = max(
             pos["highest"],
             row["Close"]
         )
 
+        # =================================================
+        # EXIT LOGIC
+        # =================================================
         exit_reason = None
 
         if row["Close"] < pos["stop"]:
@@ -172,7 +163,9 @@ try:
         except:
             days = 0
 
-        # failed breakout
+        # =================================================
+        # FAILED BREAKOUT
+        # =================================================
         if (
             not exit_reason
             and CONFIG["MARKET"] == "INDIA"
@@ -185,7 +178,9 @@ try:
 
                 exit_reason = "FAILED BREAKOUT"
 
-        # core exit logic
+        # =================================================
+        # CORE EXIT LOGIC
+        # =================================================
         exit_flag, exit_reason = portfolio.check_exit(
             symbol,
             row,
@@ -196,11 +191,22 @@ try:
 
         action = "EXIT" if exit_flag else "HOLD"
 
-        # next stop
+        # =================================================
+        # NEXT STOP
+        # =================================================
         if pos["partial"]:
-            next_stop = CONFIG["TRAIL_AFTER_PARTIAL"] * pos["highest"]
+
+            next_stop = (
+                CONFIG["TRAIL_AFTER_PARTIAL"]
+                * pos["highest"]
+            )
+
         else:
-            next_stop = CONFIG["TRAIL_INITIAL"] * pos["highest"]
+
+            next_stop = (
+                CONFIG["TRAIL_INITIAL"]
+                * pos["highest"]
+            )
 
         pnl = (
             (row["Close"] - pos["entry"])
@@ -220,6 +226,9 @@ try:
             "Days": days
         }
 
+        # =================================================
+        # SPLIT TRADE TEAM
+        # =================================================
         if pos["recommended_by"] == "Trade team":
 
             results_trade_team.append(data)
@@ -231,7 +240,7 @@ try:
             results.append(data)
 
     # =====================================================
-    # DISPLAY
+    # SORT RESULTS
     # =====================================================
     results.sort(
         key=lambda x: x["PnL %"],
@@ -243,12 +252,18 @@ try:
         reverse=True
     )
 
+    # =====================================================
+    # DATAFRAMES
+    # =====================================================
     df_live = pd.DataFrame(results)
 
     df_live_trade_team = pd.DataFrame(
         results_trade_team
     )
 
+    # =====================================================
+    # DISPLAY
+    # =====================================================
     st.dataframe(
         df_live,
         use_container_width=True
@@ -259,6 +274,9 @@ try:
         use_container_width=True
     )
 
+    # =====================================================
+    # EXIT SIGNALS
+    # =====================================================
     exits = df_live[
         df_live["Action"] == "EXIT"
     ]
