@@ -313,8 +313,17 @@ if st.button("Check Entry"):
                 score = calculate_score(df, i)
 
                 st.success(f"✅ TRUE — Good to Enter ")
-                st.success(f"minervini {fail_reasons}")
-                st.success(f"200 EMA {check_200_EMA}")
+
+                if fail_reasons == "":
+                    st.success(f"minervini {fail_reasons}")
+                else:
+                    st.error(f"minervini {fail_reasons}")
+
+                if check_200_EMA:
+                    st.success(f"200 EMA {check_200_EMA}")
+                else:
+                    st.error(f"200 EMA {check_200_EMA}")
+
                 st.write({
                     "Symbol": input_symbol,
                     "Score": round(score, 2),
