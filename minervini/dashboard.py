@@ -307,12 +307,14 @@ if st.button("Check Entry"):
             i = len(df) - 1
 
             fail_reasons = check_entry(df, i, cfg, input_symbol, debug=True)
+            check_200_EMA = check_200ema_touch_and_near_high(df, i, debug=True)
 
-            if fail_reasons == "":
+            if fail_reasons == "" or check_200_EMA:
                 score = calculate_score(df, i)
 
-                st.success(f"✅ TRUE — Good to Enter")
-
+                st.success(f"✅ TRUE — Good to Enter ")
+                st.success(f"minervini {fail_reasons}")
+                st.success(f"200 EMA {check_200_EMA}")
                 st.write({
                     "Symbol": input_symbol,
                     "Score": round(score, 2),
