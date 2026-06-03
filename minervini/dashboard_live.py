@@ -58,6 +58,19 @@ else:
 # =========================================================
 st.header(f"📁 Live Portfolio {market}")
 
+
+def cal_day_change():
+    if len(df) >= 2:
+        prev_close = df.iloc[-2]["Close"]
+        day_change = (
+                             (row["Close"] - prev_close)
+                             / prev_close
+                     ) * 100
+    else:
+        day_change = 0
+    return day_change
+
+
 try:
 
     # =====================================================
@@ -81,11 +94,11 @@ try:
     for _, r in positions_df.iterrows():
 
         portfolio.positions[r["Symbol"]] = {
-            "entry": r["Entry Price"],
-            "shares": r["Shares"],
-            "highest": r["Highest"],
+            "entry": float(r["Entry Price"]),
+            "shares": float(r["Shares"]),
+            "highest": float(r["Highest"]),
             "partial": r["Partial"] == "TRUE",
-            "stop": r["Stop"],
+            "stop": float(r["Stop"]),
             "entry_date": r["Entry Date"],
             "recommended_by": r["Recom By"],
         }
@@ -108,15 +121,22 @@ try:
 
         row = df.iloc[-1]
 
+        day_change = cal_day_change()
+
         i = len(df) - 1
 
-        # =================================================
-        # UPDATE HIGHEST
-        # =================================================
-        pos["highest"] = max(
-            pos["highest"],
-            row["Close"]
-        )
+        try:
+            entry_idx = df.index.get_loc(
+                pos["entry_date"]
+            )
+            days = i - entry_idx
+            # Highest price since entry
+            highest_since_entry = (
+                df.iloc[entry_idx:i + 1]["High"].max()
+            )
+        except:
+            days = 0
+            highest_since_entry = row["High"]
 
         # =================================================
         # EXIT LOGIC
@@ -127,13 +147,10 @@ try:
             exit_reason = "HARD STOP"
 
         try:
-
             entry_idx = df.index.get_loc(
                 pos["entry_date"]
             )
-
             days = i - entry_idx
-
         except:
             days = 0
 
@@ -151,6 +168,8 @@ try:
             ):
 
                 exit_reason = "FAILED BREAKOUT"
+
+        pos["highest"] = highest_since_entry
 
         # =================================================
         # CORE EXIT LOGIC
@@ -172,29 +191,30 @@ try:
 
             next_stop = (
                 CONFIG["TRAIL_AFTER_PARTIAL"]
-                * pos["highest"]
+                * highest_since_entry
             )
 
         else:
 
             next_stop = (
                 CONFIG["TRAIL_INITIAL"]
-                * pos["highest"]
+                * highest_since_entry
             )
 
         pnl = (
             (row["Close"] - pos["entry"])
             / pos["entry"]
         ) * 100
-
+        distance_from_high = ((row["Close"] - highest_since_entry)/ highest_since_entry) * 100
         data = {
             "Symbol": symbol,
-            "Price": round(row["Close"], 2),
+            # "Price": round(row["Close"], 2),
+            "Day%": round(day_change, 2),
             "PnL %": round(pnl, 2),
             "Partial": pos["partial"],
-            "Shares": pos["shares"],
+            # "Shares": pos["shares"],
             "Action": action,
-            "Highest": round(pos["highest"], 2),
+            "Highest": round(distance_from_high, 2),
             "Next Stop": round(next_stop, 2),
             "Reason": exit_reason if exit_reason else "",
             "Days": days
