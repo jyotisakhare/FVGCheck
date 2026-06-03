@@ -84,7 +84,7 @@ try:
             "entry": r["Entry Price"],
             "shares": r["Shares"],
             "highest": r["Highest"],
-            "partial": r["Partial"],
+            "partial": r["Partial"] == "TRUE",
             "stop": r["Stop"],
             "entry_date": r["Entry Date"],
             "recommended_by": r["Recom By"],
