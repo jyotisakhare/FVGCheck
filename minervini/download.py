@@ -51,7 +51,7 @@ def download_symbol(symbol):
 
         df = yf.download(
             symbol,
-            period="4y",
+            period="12y",
             interval="1d",
             auto_adjust=False,
             progress=False

@@ -67,6 +67,8 @@ class Portfolio:
         else:
             if row["Close"] < cfg["TRAIL_INITIAL"] * pos["highest"]:
                 return True, "TRAIL INITIAL"
+            # elif row["Close"] > (pos["entry"]*1.20):
+            #     return True, "Partial profit"
 
         # ===== 4. TREND EXIT =====
         if pos["partial"] and row["Close"] < row["EMA50"]:

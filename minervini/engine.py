@@ -43,7 +43,7 @@ def run_backtest(data, cfg):
 
                 # update capital
                 portfolio.capital += pos["shares"] * next_open
-                print(f"exiting {symbol}")
+                print(f"exiting {symbol} - {exit_reason}")
 
                 trades.append({
                     "Symbol": symbol,

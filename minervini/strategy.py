@@ -11,7 +11,7 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
         cfg["BREAKOUT_STRENGTH"] = 0.65
         cfg["MIN_NEAR_HIGH"] = 0.75
         cfg["RS_LOOKBACK"] = 4
-        cfg["TOP_N"] = 1
+        cfg["TOP_N"] = 2
         return check_entry_india(df, i, cfg, debug)
 
     # if check_200ema_touch_and_near_high(df, i, debug=False):
