@@ -47,7 +47,7 @@ print("\nBEST:", best)
 # {'Return %': 42, 'Win Rate': 58, 'Expectancy': 5, 'avg win': 15, 'avg loss': -10, 'Max DD': -7, 'Trades': 180}
 # 20 trades at a time 220 EMA exit whit 20 EMA touched
 # {'Return %': 43, 'Win Rate': 59, 'Expectancy': 4, 'avg win': 13, 'avg loss': -10, 'Max DD': -8, 'Trades': 222}
-
+# {'Return %': 62, 'Win Rate': 53, 'Expectancy': 4, 'avg win': 16, 'avg loss': -10, 'Max DD': -12, 'Trades': 200} 5 year 200 EMA
 
 # US results till 20th APR
 # {'Return %': 35, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -14, 'Trades': 122}

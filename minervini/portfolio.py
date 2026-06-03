@@ -9,10 +9,10 @@ class Portfolio:
 
     def enter(self, symbol, price, date, index):
 
-        allocation = self.capital * self.cfg["POSITION_SIZE"]
+        allocation = self.cfg["INITIAL_CAPITAL"]/self.cfg["MAX_POSITIONS"]
         shares = int(allocation / price)
 
-        if shares <= 0:
+        if shares <= 0 and self.capital >= allocation:
             return
 
         self.capital -= shares * price
@@ -26,7 +26,7 @@ class Portfolio:
             "entry_date": date,
             "entry_index": index + 1
         }
-        print(f"symbol {symbol} - {date} - {price}")
+        print(f"symbol {symbol} - {date} - {price*shares}")
 
     def update(self, symbol, row):
 

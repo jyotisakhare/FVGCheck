@@ -50,6 +50,7 @@ def run_backtest(data, cfg):
                     "Entry Date": pos["entry_date"],
                     "Exit Date": df.index[i + 1],
                     "Entry Price": pos["entry"],
+                    "shares": pos["shares"],
                     "Exit Price": next_open,
                     "Return %": (next_open - pos["entry"]) / pos["entry"] * 100,
                     "reason": exit_reason
@@ -98,9 +99,9 @@ def run_backtest(data, cfg):
         # ================= POSITION CONTROL =================
         slots_available = cfg["MAX_POSITIONS"] - len(portfolio.positions)
 
-        if slots_available > 0:
+        if portfolio.capital > 10000:
 
-            selected = candidates[:min(cfg["TOP_N"], slots_available)]
+            selected = candidates[:cfg["TOP_N"]]
 
             for symbol, score, i in selected:
 
@@ -134,7 +135,9 @@ def run_backtest(data, cfg):
 
         equity.append({
             "Date": date,
-            "Equity": total_equity
+            "Equity": total_equity,
+            "Cash": portfolio.capital,
+            "Positions": len(portfolio.positions)
         })
 
     return trades, equity
