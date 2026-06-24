@@ -399,10 +399,17 @@ if st.button("Push to mail"):
     for key, result in st.session_state.all_results.items():
         # Only append the title and table if the result dictionary/list is not empty
         if result:
+            # Sort by Score descending
+            sorted_result = sorted(
+                result,
+                key=lambda x: x.get("Score", 0),
+                reverse=True
+            )
+
             # Add the key as a section title
             html_body += f"<h3 style='margin-top: 20px; color: #333;'>{key}</h3>"
             # Append the generated HTML table
-            html_body += dict_to_html_table_columns(result)
+            html_body += dict_to_html_table_columns(sorted_result)
             html_body += "<br/>"
 
     # Optional: Send email as HTML if your send_mail function supports it
