@@ -6,7 +6,7 @@ import os
 # SYMBOL_FILE = "nasdaq.csv"
 
 SAVE_DIR = "../data_ind"
-SYMBOL_FILE = "nifty200.csv"   # one column: Symbol
+SYMBOL_FILE = "nifty500.csv"   # one column: Symbol
 
 os.makedirs(SAVE_DIR, exist_ok=True)
 

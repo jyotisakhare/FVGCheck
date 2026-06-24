@@ -38,6 +38,12 @@ if best is None or stats["Return %"] > best[0]:
     best = (stats["Return %"], vol, strength)
 
 print("\nBEST:", best)
+# minervini
+# 24 jun {'Return %': 43, 'Win Rate': 46, 'Expectancy': 4, 'avg win': 19, 'avg loss': -10, 'Max DD': -12, 'Trades': 317}
+# 200 ema
+# top 1{'Return %': 114, 'Win Rate': 54, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -15, 'Trades': 525}
+# top 2 {'Return %': 86, 'Win Rate': 48, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -13, 'Trades': 580}
+
 # India results till 6th MAY
 # normal
 # {'Return %': 27, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80}
