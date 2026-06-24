@@ -1,5 +1,5 @@
 # dashboard_pro.py
-
+import dateutil.utils
 import streamlit as st
 from collections import defaultdict
 from symbol_loader import *
@@ -7,6 +7,8 @@ from strategy import *
 from features import add_relative_strength
 from config import CONFIG
 from features import calculate_score
+from send_email import send_mail
+import html
 
 # ================= CONFIG =================
 REFRESH_SECONDS = 3600
@@ -40,6 +42,48 @@ def clean_df(df):
 
     return df
 
+
+def dict_to_html_table_columns(data):
+    """
+    data = list of dictionaries
+    """
+
+    if not data:
+        return "<p>No data available</p>"
+
+    headers = list(data[0].keys())
+
+    html_str = """
+    <table border="1"
+           style="border-collapse: collapse;
+                  width: 100%;
+                  font-family: Arial, sans-serif;">
+    """
+
+    # Header
+    html_str += "<thead><tr>"
+    for h in headers:
+        html_str += (
+            f"<th style='padding:8px;"
+            f"background:#f2f2f2;'>"
+            f"{html.escape(str(h))}</th>"
+        )
+    html_str += "</tr></thead>"
+
+    # Body
+    html_str += "<tbody>"
+    for row in data:
+        html_str += "<tr>"
+        for h in headers:
+            value = row.get(h, "")
+            html_str += (
+                f"<td style='padding:8px;'>"
+                f"{html.escape(str(value))}</td>"
+            )
+        html_str += "</tr>"
+    html_str += "</tbody></table>"
+
+    return html_str
 
 # ================= INDICATORS =================
 def add_indicators(df):
@@ -333,7 +377,7 @@ if st.button("Check Entry"):
                 })
 
             else:
-                st.error(f"❌ {fail_reasons}")
+                st.error(f"❌ {fail_reasons} 200 EMA {check_200_EMA}")
 
 if st.button("Check 200 cross ema stocks"):
     candidates = fetch_200_ema_candidates(symbols)
@@ -344,6 +388,26 @@ if st.button("Check 200 cross ema stocks"):
 if st.button("Clear List"):
     st.session_state.all_results = []
     st.rerun() # Refresh the UI immediately
+
+if st.button("Push to mail"):
+    subject = f"{selected_market} {dateutil.utils.today()}"
+
+    # Start the email body with a clean heading
+    html_body = f"<h2>{selected_market}</h2><hr/>"
+
+    # Ensure we use .items() to iterate through the dictionary
+    for key, result in st.session_state.all_results.items():
+        # Only append the title and table if the result dictionary/list is not empty
+        if result:
+            # Add the key as a section title
+            html_body += f"<h3 style='margin-top: 20px; color: #333;'>{key}</h3>"
+            # Append the generated HTML table
+            html_body += dict_to_html_table_columns(result)
+            html_body += "<br/>"
+
+    # Optional: Send email as HTML if your send_mail function supports it
+    send_mail(subject, html_body)
+    st.success("Email sent successfully!")
 
 display_all_results(final_result=st.session_state.all_results)
 
