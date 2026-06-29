@@ -5,8 +5,8 @@ import streamlit as st
 
 def load_market_symbols(base_path=""):
     market_files = {
-        "US": "nasdaq.csv",
         "INDIA": "nifty500.csv",
+        "US": "nasdaq.csv"
     }
 
     markets = {}
