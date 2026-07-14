@@ -39,7 +39,7 @@ st.title("🚀 Live Pro Dashboard")
 # =========================================================
 market = st.selectbox(
     "Market",
-    ["US", "INDIA"],
+    ["INDIA", "US"],
     key="market_select1"
 )
 
