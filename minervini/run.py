@@ -45,20 +45,15 @@ print("\nBEST:", best)
 # top 1{'Return %': 114, 'Win Rate': 54, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -15, 'Trades': 525}
 # top 2 {'Return %': 86, 'Win Rate': 48, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -13, 'Trades': 580}
 
-# India results till 6th MAY
-# normal
-# {'Return %': 27, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80}
-# {'Return %': 29, 'Win Rate': 54, 'Expectancy': 6, 'avg win': 19, 'avg loss': -9, 'Max DD': -9, 'Trades': 80} 24 may minervini
-# {'Return %': 33, 'Win Rate': 64, 'Expectancy': 5, 'avg win': 13, 'avg loss': -9, 'Max DD': -6, 'Trades': 102} 200 EMA
-# 20 trades at a time with 200 EMA
-# {'Return %': 42, 'Win Rate': 58, 'Expectancy': 5, 'avg win': 15, 'avg loss': -10, 'Max DD': -7, 'Trades': 180}
-# 20 trades at a time 220 EMA exit whit 20 EMA touched
-# {'Return %': 43, 'Win Rate': 59, 'Expectancy': 4, 'avg win': 13, 'avg loss': -10, 'Max DD': -8, 'Trades': 222}
-# {'Return %': 62, 'Win Rate': 53, 'Expectancy': 4, 'avg win': 16, 'avg loss': -10, 'Max DD': -12, 'Trades': 200} 5 year 200 EMA
-
 # US results till 20th APR
 # {'Return %': 35, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -14, 'Trades': 122}
 # TOP 2 27 may
 # {'Return %': 33, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -13, 'Trades': 126}
 # 200 EMA top 2 with max 20 trades
 #  {'Return %': 49, 'Win Rate': 57, 'Expectancy': 6, 'avg win': 19, 'avg loss': -10, 'Max DD': -11, 'Trades': 165}
+
+# minervini
+# {'Return %': 38, 'Win Rate': 51, 'Expectancy': 5, 'avg win': 20, 'avg loss': -11, 'Max DD': -13, 'Trades': 229}
+# 200 Ema
+# top 2 nasdaq {'Return %': 75, 'Win Rate': 58, 'Expectancy': 6, 'avg win': 18, 'avg loss': -10, 'Max DD': -9, 'Trades': 283}
+# snp 500 partial at 15% {'Return %': 59, 'Win Rate': 45, 'Expectancy': 4, 'avg win': 22, 'avg loss': -10, 'Max DD': -15, 'Trades': 334}

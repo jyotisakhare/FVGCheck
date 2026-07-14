@@ -41,6 +41,7 @@ class Portfolio:
             self.capital += sell * row["Close"]
             pos["partial"] = True
             pos["stop"] = pos["entry"]
+            print(f"partial booked {symbol}")
 
     def check_exit_ind(self, symbol, row, i, cfg, df):
         # print(f"checking exit india for {symbol}")
