@@ -17,7 +17,7 @@ for vol in [2.0]: #[1.3, 1.5, 2.0]
         cfg["BREAKOUT_VOLUME_MULT"] = vol
         cfg["BREAKOUT_STRENGTH"] = strength
         if cfg["MARKET"] == "INDIA":
-            cfg["TOP_N"] = 1
+            cfg["TOP_N"] = 2
 
         trades, equity = run_backtest(data, cfg)
 
@@ -44,6 +44,7 @@ print("\nBEST:", best)
 # 200 ema
 # top 1{'Return %': 114, 'Win Rate': 54, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -15, 'Trades': 525}
 # top 2 {'Return %': 86, 'Win Rate': 48, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -13, 'Trades': 580}
+# top 2 {'Return %': 105, 'Win Rate': 50, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -12, 'Trades': 611}
 
 # US results till 20th APR
 # {'Return %': 35, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -14, 'Trades': 122}
