@@ -42,6 +42,22 @@ def clean_df(df):
 
     return df
 
+def fetch_market_cap(symbol):
+    market_cap_cr = 0
+    # Fetch Market Cap
+    try:
+        ticker = yf.Ticker(symbol)
+        market_cap = ticker.fast_info.get("market_cap", None)
+
+        # Fallback if fast_info doesn't have it
+        if market_cap is None:
+            market_cap = ticker.info.get("marketCap", None)
+
+        market_cap_cr = round(market_cap / 1e7, 2) if market_cap else None
+    except Exception:
+        market_cap = None
+    return market_cap_cr
+
 
 def dict_to_html_table_columns(data):
     """
@@ -120,7 +136,8 @@ def fetch_candidates(symbols) :
                 "Score": score,
                 "Price": float(df["Close"].iloc[-1]),
                 "Volume": int(df["Volume"].iloc[-1]),
-                "RS": round(df["RS"].iloc[-1], 3)
+                "RS": round(df["RS"].iloc[-1], 3),
+                "Marketcap": fetch_market_cap(symbol),
             })
         progress.progress((row + 1) / len(symbols))
         row = row + 1
@@ -148,7 +165,8 @@ def fetch_vcp_candidates(symbols) :
                 "Score": score,
                 "Price": float(df["Close"].iloc[-1]),
                 "Volume": int(df["Volume"].iloc[-1]),
-                "RS": round(df["RS"].iloc[-1], 3)
+                "RS": round(df["RS"].iloc[-1], 3),
+                "Marketcap": fetch_market_cap(symbol),
             })
         progress.progress((row + 1) / len(symbols))
         row = row + 1
@@ -176,7 +194,8 @@ def fetch_200_ema_candidates(symbols) :
                 "Score": score,
                 "Price": float(df["Close"].iloc[-1]),
                 "Volume": int(df["Volume"].iloc[-1]),
-                "RS": round(df["RS"].iloc[-1], 3)
+                "RS": round(df["RS"].iloc[-1], 3),
+                "Marketcap": fetch_market_cap(symbol),
             })
         progress.progress((row + 1) / len(symbols))
         row = row + 1
