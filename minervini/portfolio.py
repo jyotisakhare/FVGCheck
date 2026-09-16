@@ -26,7 +26,7 @@ class Portfolio:
             "entry_date": date,
             "entry_index": index + 1
         }
-        print(f"symbol {symbol} - {date} - {price*shares}")
+        print(f"symbol {symbol} - {date} -price -{price} - total {price*shares}")
 
     def update(self, symbol, row):
 
