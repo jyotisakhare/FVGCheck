@@ -54,6 +54,24 @@ class Portfolio:
         if row["Close"] < pos["stop"]:
             return True, "HARD STOP"
 
+        # ===== HIGH-VOLUME SELLING EXIT AFTER PARTIAL =====
+        if pos["partial"] and i >= 20:
+
+            prev_close = df["Close"].iloc[i - 1]
+
+            price_change = row["Close"] / prev_close - 1
+
+            avg_vol_20 = df["Volume"].iloc[i - 20:i].mean()
+
+            volume_ratio = (
+                row["Volume"] / avg_vol_20
+                if avg_vol_20 > 0
+                else 0
+            )
+
+            if price_change <= -0.035 and volume_ratio >= 2.0:
+                return True, "3.5% DROP + 2X AVG VOLUME AFTER PARTIAL"
+
         # ===== 2. INDIA LOGIC =====
         if days_held < 3:
             return False, None
