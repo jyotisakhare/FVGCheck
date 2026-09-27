@@ -11,7 +11,6 @@ def check_entry(df, i, CONFIG, symbol, debug=False):
         cfg["BREAKOUT_STRENGTH"] = 0.65
         cfg["MIN_NEAR_HIGH"] = 0.75
         cfg["RS_LOOKBACK"] = 4
-        cfg["TOP_N"] = 2
         return check_entry_india(df, i, cfg, debug)
 
     # if check_200ema_touch_and_near_high(df, i, debug=False):
@@ -148,11 +147,11 @@ def check_entry_india(df, i, cfg, debug=False):
     # else:
     #     return "FAIL VCP"
     #
-    # if check_200ema_touch_and_near_high(df, i, debug=False):
-    #     if debug: print("200 ema")
-    #     return ""
-    # else:
-    #     return "failed 200 EMA"
+    if check_200ema_touch_and_near_high(df, i, debug=False):
+        if debug: print("200 ema")
+        return ""
+    else:
+        return "failed 200 EMA"
 
     row = df.iloc[i]
 
@@ -383,7 +382,7 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
         return False
 
     # --- 3. 80 days high -> 16-week high (relative to index i) ---
-    high_start = max(0, i - 80)
+    high_start = max(0, i - 70)
     high_52w = df["High"].iloc[high_start: i + 1].max()
     current_price = df["Close"].iloc[i]
 

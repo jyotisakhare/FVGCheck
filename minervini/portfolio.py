@@ -1,4 +1,5 @@
 # portfolio.py
+import math
 
 class Portfolio:
 
@@ -9,17 +10,32 @@ class Portfolio:
 
     def enter(self, symbol, price, date, index):
 
-        allocation = self.cfg["INITIAL_CAPITAL"]/self.cfg["MAX_POSITIONS"]
-        shares = int(allocation / price)
+        allocation = self.capital/(self.cfg["MAX_POSITIONS"] - len(self.positions))
 
-        if shares <= 0 and self.capital >= allocation:
+        # Inside your enter function...
+        if math.isinf(allocation) or math.isnan(allocation):
+            print(f"Error: Invalid allocation calculated: {allocation}")
+            # Handle the error (e.g., set to 0, skip the trade, or raise a custom error)
+            shares = 0
+        else:
+            shares = int(allocation) / price
+
+        shares = int(shares)
+
+        if allocation <= 0 or price <= 0:
             return
 
-        self.capital -= shares * price
+        if shares <= 0:
+            return
+
+        if self.capital <= allocation:
+            return
+
+        self.capital -= int(shares) * price
 
         self.positions[symbol] = {
             "entry": price,
-            "shares": shares,
+            "shares": int(shares),
             "highest": price,
             "partial": False,
             "stop": price * 0.90,

@@ -1,3 +1,5 @@
+import pandas as pd
+
 from portfolio import Portfolio
 from strategy import check_entry
 from features import calculate_score
@@ -98,6 +100,8 @@ def run_backtest(data, cfg):
 
         # ================= POSITION CONTROL =================
         slots_available = cfg["MAX_POSITIONS"] - len(portfolio.positions)
+        if slots_available < 0:
+            continue
 
         if portfolio.capital > 10000:
 
@@ -140,4 +144,23 @@ def run_backtest(data, cfg):
             "Positions": len(portfolio.positions)
         })
 
+    export_portfolio_to_csv(portfolio.positions)
     return trades, equity
+
+def export_portfolio_to_csv(data, filename="current_positions.csv"):
+    # 1. Convert nested dictionary to a DataFrame (orient='index' makes tickers the rows)
+    df = pd.DataFrame.from_dict(data, orient="index")
+
+    # 2. Move the ticker from the index into its own named column
+    df.index.name = "ticker"
+    df = df.reset_index()
+
+    # Optional: Format the entry_date column cleanly so it doesn't show raw timestamp formatting
+    if "entry_date" in df.columns:
+        df["entry_date"] = pd.to_datetime(df["entry_date"]).dt.strftime(
+            "%Y-%m-%d"
+        )
+
+    # 3. Export to CSV file
+    df.to_csv(filename, index=False)
+    print(f" Successfully exported portfolio to {filename}")

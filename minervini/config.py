@@ -1,9 +1,8 @@
 # config.py
 
 CONFIG = {
-    "INITIAL_CAPITAL": 200000,
-    "POSITION_SIZE": 0.10,
-    "MAX_POSITIONS": 20,
+    "INITIAL_CAPITAL": 500000,
+    "MAX_POSITIONS": 50,
     "TOP_N": 2,
     "MARKET":"INDIA",
 
