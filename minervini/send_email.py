@@ -6,12 +6,15 @@ def send_mail(subject, html_body):
     msg = EmailMessage()
     sender = "jyotijakapure31@gmail.com"
     password = "igng hurz zsem dzcv"  # Use an app password, not your normal password
-    recipient = "jyotisakhare13@gmail.com"
+    recipients = [
+        "jyotisakhare13@gmail.com",
+        "ravijakapure@gmail.com"
+    ]
     html_body = "<p>" + html_body + "</p>"
     msg = EmailMessage()
     msg["Subject"] = subject
     msg["From"] = sender
-    msg["To"] = recipient
+    msg["To"] = ", ".join(recipients)
     msg.set_content(html_body, subtype="html")
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
