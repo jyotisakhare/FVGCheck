@@ -46,7 +46,9 @@ print("\nBEST:", best)
 # top 2 2.0 0.75 {'Return %': 92, 'Win Rate': 49, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -42, 'Trades': 591}
 # 2.0 0.75 {'Return %': 96, 'Win Rate': 50, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -49, 'Trades': 633}
 # with 50 trades at a time {'Return %': 51, 'Win Rate': 49, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -10, 'Trades': 922}
-# 2.0 0.75 {'Return %': 72, 'Win Rate': 51, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 711}
+# 50 trade {'Return %': 72, 'Win Rate': 51, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 711}
+# 20 trades {'Return %': 125, 'Win Rate': 53, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 338}
+# 25 trades {'Return %': 91, 'Win Rate': 50, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 417}
 
 
 # US results till 20th APR
