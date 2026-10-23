@@ -1,6 +1,9 @@
 # portfolio.py
 import math
 
+from minervini.strategy import weekly_ema_cross
+
+
 class Portfolio:
 
     def __init__(self, capital, cfg):
@@ -117,6 +120,9 @@ class Portfolio:
 
         if row["Close"] < row["EMA10"]:
             return False, "EMA10 touched"
+
+        if weekly_ema_cross(df, "bearish"):
+            return True, "weekly_ema_cross BEARISH"
 
         return False, None
 
