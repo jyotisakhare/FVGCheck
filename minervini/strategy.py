@@ -368,6 +368,18 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
     # --- 1. Calculate 200 EMA ---
     df["ema200"] = df["Close"].ewm(span=200, adjust=False).mean()
 
+    # ensure weekly 20 EMA is gt than 50EMA
+    weekly_close = df["Close"].resample("W-FRI").last().dropna()
+    if len(weekly_close) < 51:
+        return False
+
+    ema20 = weekly_close.ewm(span=20, adjust=False).mean()
+    ema50 = weekly_close.ewm(span=50, adjust=False).mean()
+    curr20 = ema20.iloc[-1]
+    curr50 = ema50.iloc[-1]
+    if curr20 < curr50:
+        return False
+
     # --- 2. Check touch in last 100 days relative to index i ---
     # We take the 100 rows leading up to i
     start_idx = max(0, i - 99)
@@ -412,3 +424,25 @@ def check_200ema_touch_and_near_high(dataF, i, debug=False):
     # 80 days high - {'Return %': 37, 'Win Rate': 63, 'Expectancy': 5, 'avg win': 13, 'avg loss': -9, 'Max DD': -6, 'Trades': 100}
     # 251 days {'Return %': 25, 'Win Rate': 57, 'Expectancy': 5, 'avg win': 16, 'avg loss': -9, 'Max DD': -7, 'Trades': 81}
     return True
+
+def weekly_ema_cross(dataF, direction="bullish"):
+    # Create a full copy to avoid modifying the original dataF
+    df = dataF.copy()
+    weekly_close = df["Close"].resample("W-FRI").last().dropna()
+
+    if len(weekly_close) < 51:
+        return False
+
+    ema20 = weekly_close.ewm(span=20, adjust=False).mean()
+    ema50 = weekly_close.ewm(span=50, adjust=False).mean()
+
+    prev20, curr20 = ema20.iloc[-2], ema20.iloc[-1]
+    prev50, curr50 = ema50.iloc[-2], ema50.iloc[-1]
+
+    if direction == "bullish":
+        return bool(prev20 <= prev50 and curr20 > curr50)
+
+    if direction == "bearish":
+        return curr20 < curr50
+
+    raise ValueError("direction must be 'bullish' or 'bearish'")

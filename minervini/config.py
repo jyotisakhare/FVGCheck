@@ -2,7 +2,7 @@
 
 CONFIG = {
     "INITIAL_CAPITAL": 500000,
-    "MAX_POSITIONS": 50,
+    "MAX_POSITIONS": 25,
     "TOP_N": 2,
     "MARKET":"INDIA",
 

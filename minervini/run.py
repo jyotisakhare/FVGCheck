@@ -49,6 +49,7 @@ print("\nBEST:", best)
 # 50 trade {'Return %': 72, 'Win Rate': 51, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 711}
 # 20 trades {'Return %': 125, 'Win Rate': 53, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 338}
 # 25 trades {'Return %': 91, 'Win Rate': 50, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 417}
+# 25 trades added 20>50EMA {'Return %': 113, 'Win Rate': 56, 'Expectancy': 7, 'avg win': 21, 'avg loss': -9, 'Max DD': -16, 'Trades': 324}
 
 
 # US results till 20th APR

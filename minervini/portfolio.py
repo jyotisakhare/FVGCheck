@@ -88,9 +88,6 @@ class Portfolio:
                 else 0
             )
 
-            if price_change <= -0.035 and volume_ratio >= 2.0:
-                return True, "3.5% DROP + 2X AVG VOLUME AFTER PARTIAL"
-
         # ===== 2. INDIA LOGIC =====
         if days_held < 3:
             return False, None
@@ -156,6 +153,9 @@ class Portfolio:
 
         if row["Close"] < row["EMA10"]:
             return False, "EMA10 touched"
+
+        if weekly_ema_cross(df, "bearish"):
+            return True, "weekly_ema_cross BEARISH"
 
         return False, None
 
