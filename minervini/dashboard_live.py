@@ -101,6 +101,7 @@ try:
             "stop": float(r["Stop"]),
             "entry_date": r["Entry Date"],
             "recommended_by": r["Recom By"],
+            "invested": float(float(r["Entry Price"]) * float(r["Shares"])),
         }
 
     results = []
