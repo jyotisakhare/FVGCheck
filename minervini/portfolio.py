@@ -69,6 +69,9 @@ class Portfolio:
         # ===== DAYS HELD =====
         days_held = self.get_days_held(df, pos, i)
 
+        if weekly_ema_cross(df, "bearish"):
+            return True, "weekly_ema_cross BEARISH"
+
         # ===== 1. HARD STOP =====
         if row["Close"] < pos["stop"]:
             return True, "HARD STOP"
@@ -118,9 +121,6 @@ class Portfolio:
         if row["Close"] < row["EMA10"]:
             return False, "EMA10 touched"
 
-        if weekly_ema_cross(df, "bearish"):
-            return True, "weekly_ema_cross BEARISH"
-
         return False, None
 
     def check_exit(self, symbol, row, i, cfg, df):
@@ -130,6 +130,9 @@ class Portfolio:
 
         pos = self.positions[symbol]
         days_held = self.get_days_held(df, pos, i)
+
+        if weekly_ema_cross(df, "bearish"):
+            return True, "weekly_ema_cross BEARISH"
 
         # ===== HARD STOP =====
         if row["Close"] < pos["stop"]:
@@ -153,9 +156,6 @@ class Portfolio:
 
         if row["Close"] < row["EMA10"]:
             return False, "EMA10 touched"
-
-        if weekly_ema_cross(df, "bearish"):
-            return True, "weekly_ema_cross BEARISH"
 
         return False, None
 
