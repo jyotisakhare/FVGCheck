@@ -226,7 +226,8 @@ try:
             "Highest": round(distance_from_high, 2),
             "Next Stop": round(next_stop, 2),
             "Reason": exit_reason if exit_reason else "",
-            "Days": days
+            "Days": days,
+            "Invested": round(pos["entry"]*pos["shares"]),
         }
 
         # =================================================
