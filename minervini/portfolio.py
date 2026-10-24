@@ -1,7 +1,7 @@
 # portfolio.py
 import math
 
-from minervini.strategy import weekly_ema_cross
+from strategy import weekly_ema_cross
 
 
 class Portfolio:
