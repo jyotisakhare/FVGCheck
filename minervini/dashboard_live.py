@@ -227,7 +227,6 @@ try:
             "Next Stop": round(next_stop, 2),
             "Reason": exit_reason if exit_reason else "",
             "Days": days,
-            "Invested": round(pos["entry"]*pos["shares"]),
         }
 
         # =================================================
