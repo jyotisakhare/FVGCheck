@@ -101,7 +101,6 @@ try:
             "stop": float(r["Stop"]),
             "entry_date": r["Entry Date"],
             "recommended_by": r["Recom By"],
-            "invested": float(float(r["Entry Price"]) * float(r["Shares"])),
         }
 
     results = []
@@ -227,6 +226,7 @@ try:
             "Next Stop": round(next_stop, 2),
             "Reason": exit_reason if exit_reason else "",
             "Days": days,
+            "Invested": round(pos["entry"]*pos["shares"]),
         }
 
         # =================================================
