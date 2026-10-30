@@ -185,7 +185,7 @@ try:
         if (not pos["partial"]
                 and row["Close"] >= CONFIG["PARTIAL_PROFIT"] * pos["entry"]
                 and pos["shares"] > 1
-                and pos["recommended_by"] != "Trade team"
+                and pos["recommended_by"] != "Trade team" and pos["recommended_by"] != "twitter"
         ):
             exit_flag = True
             exit_reason = "PARTIAL_PROFIT"
@@ -232,7 +232,7 @@ try:
         # =================================================
         # SPLIT TRADE TEAM
         # =================================================
-        if pos["recommended_by"] == "Trade team":
+        if pos["recommended_by"] == "Trade team" or pos["recommended_by"] == "twitter":
 
             results_trade_team.append(data)
 
