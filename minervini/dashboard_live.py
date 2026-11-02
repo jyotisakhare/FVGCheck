@@ -248,10 +248,10 @@ try:
     current_invested_trade = 0
     for result in results:
         total_invested = total_invested + result["Invested"]
-        current_invested = current_invested + result["Price"] * result["Shares"]
+        current_invested = round(current_invested + result["Price"] * result["Shares"])
     for result in results_trade_team:
         total_invested_trade = total_invested_trade + result["Invested"]
-        current_invested_trade = current_invested_trade + result["Price"] * result["Shares"]
+        current_invested_trade = round(current_invested_trade + result["Price"] * result["Shares"])
 
 
     # =====================================================
@@ -280,27 +280,19 @@ try:
     # DISPLAY
     # =====================================================
 
-    st.metric(
-        "Total Invested ",
-        total_invested
-    )
-    st.metric(
-        "Current Value ",
-        current_invested
-    )
+    col1, col2 = st.columns(2)
+    col1.metric("Total Invested", total_invested)
+    col2.metric("Current Value", current_invested)
+
     st.dataframe(
         df_live,
         width="stretch"
     )
 
-    st.metric(
-        "Total Invested",
-        total_invested_trade
-    )
-    st.metric(
-        "Current Value ",
-        current_invested_trade
-    )
+    col11, col12 = st.columns(2)
+    col11.metric("Total Invested", total_invested_trade)
+    col12.metric("Current Value", current_invested_trade)
+
     st.dataframe(
         df_live_trade_team,
         width="stretch"
