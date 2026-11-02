@@ -216,17 +216,17 @@ try:
         distance_from_high = ((row["Close"] - highest_since_entry)/ highest_since_entry) * 100
         data = {
             "Symbol": symbol,
-            "Price": round(row["Close"], 2),
             "Day%": round(day_change, 2),
             "PnL %": round(pnl, 2),
             "Partial": pos["partial"],
-            # "Shares": pos["shares"],
             "Action": action,
             "Highest": round(distance_from_high, 2),
             "Next Stop": round(next_stop, 2),
             "Reason": exit_reason if exit_reason else "",
             "Days": days,
             "Invested": round(pos["entry"]*pos["shares"]),
+            "Shares": pos["shares"],
+            "Price": round(row["Close"], 2),
         }
 
         # =================================================
@@ -244,10 +244,14 @@ try:
 
     total_invested = 0
     total_invested_trade = 0
+    current_invested = 0
+    current_invested_trade = 0
     for result in results:
         total_invested = total_invested + result["Invested"]
+        current_invested = current_invested + result["Price"] * result["Shares"]
     for result in results_trade_team:
         total_invested_trade = total_invested_trade + result["Invested"]
+        current_invested_trade = current_invested_trade + result["Price"] * result["Shares"]
 
 
     # =====================================================
@@ -277,8 +281,12 @@ try:
     # =====================================================
 
     st.metric(
-        "Total Invested",
+        "Total Invested ",
         total_invested
+    )
+    st.metric(
+        "Current Value ",
+        current_invested
     )
     st.dataframe(
         df_live,
@@ -288,6 +296,10 @@ try:
     st.metric(
         "Total Invested",
         total_invested_trade
+    )
+    st.metric(
+        "Current Value ",
+        current_invested_trade
     )
     st.dataframe(
         df_live_trade_team,
