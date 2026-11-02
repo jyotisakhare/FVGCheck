@@ -244,14 +244,14 @@ try:
 
     total_invested = 0
     total_invested_trade = 0
-    current_invested = 0
-    current_invested_trade = 0
+    current_val = 0
+    current_val_trade_team = 0
     for result in results:
         total_invested = total_invested + result["Invested"]
-        current_invested = round(current_invested + (result["Price"] * result["Shares"]), 2)
+        current_val = round(current_val + (result["Price"] * result["Shares"]), 2)
     for result in results_trade_team:
         total_invested_trade = total_invested_trade + result["Invested"]
-        current_invested_trade = round(current_invested_trade + (result["Price"] * result["Shares"]), 2)
+        current_val_trade_team = round(current_val_trade_team + (result["Price"] * result["Shares"]), 2)
 
 
     # =====================================================
@@ -282,8 +282,8 @@ try:
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Invested", total_invested)
-    col2.metric("Current Value", current_invested)
-    col3.metric("Profit", round(((current_invested - total_invested)/total_invested)*100),2)
+    col2.metric("Current Value", current_val)
+    col3.metric("Profit", ((current_val - total_invested) / total_invested) * 100)
 
     st.dataframe(
         df_live,
@@ -292,8 +292,8 @@ try:
 
     col11, col12, col13 = st.columns(3)
     col11.metric("Total Invested", total_invested_trade)
-    col12.metric("Current Value", current_invested_trade)
-    col13.metric("Profit", round(((current_invested_trade - total_invested_trade)/total_invested_trade)*100),2)
+    col12.metric("Current Value", current_val_trade_team)
+    col13.metric("Profit", round(((current_val_trade_team - total_invested_trade) / total_invested_trade) * 100), 2)
 
     st.dataframe(
         df_live_trade_team,
