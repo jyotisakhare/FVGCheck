@@ -258,12 +258,12 @@ try:
     # SORT RESULTS
     # =====================================================
     results.sort(
-        key=lambda x: x["PnL %"],
+        key=lambda x: x["Invested"],
         reverse=True
     )
 
     results_trade_team.sort(
-        key=lambda x: x["PnL %"],
+        key=lambda x: x["Invested"],
         reverse=True
     )
 
