@@ -242,6 +242,14 @@ try:
 
             results.append(data)
 
+    total_invested = 0
+    total_invested_trade = 0
+    for result in results:
+        total_invested = total_invested + result["Invested"]
+    for result in results_trade_team:
+        total_invested = total_invested + result["Invested"]
+
+
     # =====================================================
     # SORT RESULTS
     # =====================================================
@@ -267,11 +275,20 @@ try:
     # =====================================================
     # DISPLAY
     # =====================================================
+
+    st.metric(
+        "Total Invested",
+        total_invested
+    )
     st.dataframe(
         df_live,
         width="stretch"
     )
 
+    st.metric(
+        "Total Invested",
+        total_invested_trade
+    )
     st.dataframe(
         df_live_trade_team,
         width="stretch"
