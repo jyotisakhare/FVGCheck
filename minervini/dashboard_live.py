@@ -248,10 +248,10 @@ try:
     current_invested_trade = 0
     for result in results:
         total_invested = total_invested + result["Invested"]
-        current_invested = current_invested + round(result["Price"] * result["Shares"])
+        current_invested = round(current_invested + (result["Price"] * result["Shares"]), 2)
     for result in results_trade_team:
         total_invested_trade = total_invested_trade + result["Invested"]
-        current_invested_trade = current_invested_trade + round(result["Price"] * result["Shares"])
+        current_invested_trade = round(current_invested_trade + (result["Price"] * result["Shares"]), 2)
 
 
     # =====================================================
