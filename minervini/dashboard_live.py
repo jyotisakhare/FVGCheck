@@ -283,7 +283,7 @@ try:
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Invested", total_invested)
     col2.metric("Current Value", current_val)
-    col3.metric("Profit", ((current_val - total_invested) / total_invested) * 100)
+    col3.metric("Profit", round(((current_val - total_invested) / total_invested) * 100, 2))
 
     st.dataframe(
         df_live,
@@ -293,7 +293,7 @@ try:
     col11, col12, col13 = st.columns(3)
     col11.metric("Total Invested", total_invested_trade)
     col12.metric("Current Value", current_val_trade_team)
-    col13.metric("Profit", round(((current_val_trade_team - total_invested_trade) / total_invested_trade) * 100), 2)
+    col13.metric("Profit", round(((current_val_trade_team - total_invested_trade) / total_invested_trade) * 100, 2))
 
     st.dataframe(
         df_live_trade_team,
