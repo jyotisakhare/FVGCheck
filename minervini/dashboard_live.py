@@ -247,7 +247,7 @@ try:
     for result in results:
         total_invested = total_invested + result["Invested"]
     for result in results_trade_team:
-        total_invested = total_invested + result["Invested"]
+        total_invested_trade = total_invested_trade + result["Invested"]
 
 
     # =====================================================
