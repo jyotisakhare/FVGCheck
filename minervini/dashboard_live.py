@@ -216,7 +216,7 @@ try:
         distance_from_high = ((row["Close"] - highest_since_entry)/ highest_since_entry) * 100
         data = {
             "Symbol": symbol,
-            # "Price": round(row["Close"], 2),
+            "Price": round(row["Close"], 2),
             "Day%": round(day_change, 2),
             "PnL %": round(pnl, 2),
             "Partial": pos["partial"],
