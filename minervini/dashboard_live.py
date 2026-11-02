@@ -280,18 +280,20 @@ try:
     # DISPLAY
     # =====================================================
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     col1.metric("Total Invested", total_invested)
     col2.metric("Current Value", current_invested)
+    col3.metric("Profit", ((current_invested - total_invested)/total_invested)*100)
 
     st.dataframe(
         df_live,
         width="stretch"
     )
 
-    col11, col12 = st.columns(2)
+    col11, col12, col13 = st.columns(2)
     col11.metric("Total Invested", total_invested_trade)
     col12.metric("Current Value", current_invested_trade)
+    col13.metric("Profit", ((current_invested_trade - total_invested_trade)/total_invested_trade)*100)
 
     st.dataframe(
         df_live_trade_team,
