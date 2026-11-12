@@ -131,9 +131,6 @@ class Portfolio:
         pos = self.positions[symbol]
         days_held = self.get_days_held(df, pos, i)
 
-        if weekly_ema_cross(df, "bearish"):
-            return True, "weekly_ema_cross BEARISH"
-
         # ===== HARD STOP =====
         if row["Close"] < pos["stop"]:
             return True, "HARD STOP"
