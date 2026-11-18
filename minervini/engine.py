@@ -104,7 +104,7 @@ def run_backtest(data, cfg):
             continue
 
         if portfolio.capital > 10000:
-
+            # print(candidates)
             selected = candidates[:cfg["TOP_N"]]
 
             for symbol, score, i in selected:

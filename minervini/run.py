@@ -50,6 +50,10 @@ print("\nBEST:", best)
 # 20 trades {'Return %': 125, 'Win Rate': 53, 'Expectancy': 5, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 338}
 # 25 trades {'Return %': 91, 'Win Rate': 50, 'Expectancy': 4, 'avg win': 18, 'avg loss': -10, 'Max DD': -17, 'Trades': 417}
 # 25 trades added 20>50EMA {'Return %': 113, 'Win Rate': 56, 'Expectancy': 7, 'avg win': 21, 'avg loss': -9, 'Max DD': -16, 'Trades': 324}
+# 2.0 0.75 {'Return %': 169, 'Win Rate': 59, 'Expectancy': 10, 'avg win': 26, 'avg loss': -12, 'Max DD': -33, 'Trades': 277}
+# 2.0 0.75 {'Return %': 169, 'Win Rate': 49, 'Expectancy': 8, 'avg win': 25, 'avg loss': -9, 'Max DD': -30, 'Trades': 346}
+# removed all exit and kept only week SMA 20 EXIT
+# 2.0 0.75 {'Return %': 279, 'Win Rate': 47, 'Expectancy': 21, 'avg win': 55, 'avg loss': -9, 'Max DD': -32, 'Trades': 230}
 
 
 # US results till 20th APR

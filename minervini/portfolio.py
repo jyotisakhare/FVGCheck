@@ -1,6 +1,8 @@
 # portfolio.py
 import math
 
+import pandas as pd
+
 from strategy import weekly_ema_cross
 
 
@@ -41,7 +43,7 @@ class Portfolio:
             "shares": int(shares),
             "highest": price,
             "partial": False,
-            "stop": price * 0.90,
+            "stop": price * 0.15,
             "entry_date": date,
             "entry_index": index + 1
         }
@@ -53,14 +55,14 @@ class Portfolio:
 
         pos["highest"] = max(pos["highest"], row["Close"])
 
-        # Partial
-        if not pos["partial"] and row["Close"] >= self.cfg["PARTIAL_PROFIT"] * pos["entry"]:
-            sell = int(pos["shares"] * self.cfg["PARTIAL_SELL"])
-            pos["shares"] -= sell
-            self.capital += sell * row["Close"]
-            pos["partial"] = True
-            pos["stop"] = pos["entry"]
-            print(f"partial booked {symbol}")
+        # # Partial profit booking
+        # if not pos["partial"] and row["Close"] >= self.cfg["PARTIAL_PROFIT"] * pos["entry"]:
+        #     sell = int(pos["shares"] * self.cfg["PARTIAL_SELL"])
+        #     pos["shares"] -= sell
+        #     self.capital += sell * row["Close"]
+        #     pos["partial"] = True
+        #     pos["stop"] = pos["entry"]
+        #     print(f"partial booked {symbol}")
 
     def check_exit_ind(self, symbol, row, i, cfg, df):
         # print(f"checking exit india for {symbol}")
@@ -69,57 +71,68 @@ class Portfolio:
         # ===== DAYS HELD =====
         days_held = self.get_days_held(df, pos, i)
 
-        if weekly_ema_cross(df, "bearish"):
-            return True, "weekly_ema_cross BEARISH"
+        # if weekly_ema_cross(df, "bearish"):
+        #     return True, "weekly_ema_cross BEARISH"
 
-        # ===== 1. HARD STOP =====
-        if row["Close"] < pos["stop"]:
-            return True, "HARD STOP"
+        # 1. Check if today is Friday (Monday=0, ..., Friday=4)
+        current_date = row["Date"] if "Date" in row else row.name
+        is_friday = pd.to_datetime(current_date).dayofweek == 4
 
-        # ===== HIGH-VOLUME SELLING EXIT AFTER PARTIAL =====
-        if pos["partial"] and i >= 20:
+        # 2. Check if daily close is below the pre-calculated Weekly EMA 20
+        if is_friday and row["Close"] < row["Weekly_SMA20"]:
+            return True, "WEEKLY SMA20 EXIT"
 
-            prev_close = df["Close"].iloc[i - 1]
-
-            price_change = row["Close"] / prev_close - 1
-
-            avg_vol_20 = df["Volume"].iloc[i - 20:i].mean()
-
-            volume_ratio = (
-                row["Volume"] / avg_vol_20
-                if avg_vol_20 > 0
-                else 0
-            )
-
-        # ===== 2. INDIA LOGIC =====
-        if days_held < 3:
-            return False, None
-
-        # if days_held > 30 and row["Close"] < pos["entry"]:
-        #     return True, "LONG FAIL TRADE"
-
-        # ===== 3. TRAILING STOP =====
-        if pos["partial"]:
-            if row["Close"] < cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:
-                return True, "TRAIL AFTER PARTIAL"
-        else:
-            if row["Close"] < cfg["TRAIL_INITIAL"] * pos["highest"]:
-                return True, "TRAIL INITIAL"
-            # elif row["Close"] > (pos["entry"]*1.20):
-            #     return True, "Partial profit"
-
-        # ===== 4. TREND EXIT =====
-        if pos["partial"] and row["Close"] < row["EMA50"]:
-            return True, "TREND BREAK"
-
-        if pos["partial"] and row["EMA20"] < row["EMA50"]:
-            return True, "TREND BREAK 20<50"
-
-        if row["Close"] < row["EMA20"]:
-            return False, "EMA20 touched"
-
-        if row["Close"] < row["EMA10"]:
-            return False, "EMA10 touched"
+        # # ===== 1. HARD STOP =====
+        # if row["Close"] < pos["stop"]:
+        #     return True, "HARD STOP"
+        #
+        # # ===== HIGH-VOLUME SELLING EXIT AFTER PARTIAL =====
+        # if pos["partial"] and i >= 20:
+        #
+        #     prev_close = df["Close"].iloc[i - 1]
+        #
+        #     price_change = row["Close"] / prev_close - 1
+        #
+        #     avg_vol_20 = df["Volume"].iloc[i - 20:i].mean()
+        #
+        #     volume_ratio = (
+        #         row["Volume"] / avg_vol_20
+        #         if avg_vol_20 > 0
+        #         else 0
+        #     )
+        #
+        # # ===== 2. INDIA LOGIC =====
+        # if days_held < 3:
+        #     return False, None
+        #
+        # # if days_held > 30 and row["Close"] < pos["entry"]:
+        # #     return True, "LONG FAIL TRADE"
+        #
+        # # ===== 3. TRAILING STOP =====
+        # if pos["partial"]:
+        #     if row["Close"] < cfg["TRAIL_AFTER_PARTIAL"] * pos["highest"]:
+        #         return True, "TRAIL AFTER PARTIAL"
+        # else:
+        #     if row["Close"] < cfg["TRAIL_INITIAL"] * pos["highest"]:
+        #         return True, "TRAIL INITIAL"
+        #     # elif row["Close"] > (pos["entry"]*1.20):
+        #     #     return True, "Partial profit"
+        #
+        # # ===== 4. TREND EXIT =====
+        # if pos["partial"] and row["Close"] < row["EMA50"]:
+        #     return True, "TREND BREAK"
+        #
+        # if pos["partial"] and row["EMA20"] < row["EMA50"]:
+        #     return True, "TREND BREAK 20<50"
+        #
+        # if row["Close"] < row["EMA50"]:
+        #     return False, "EMA50 touched"
+        #
+        # if row["Close"] < row["EMA20"]:
+        #     return False, "EMA20 touched"
+        #
+        # if row["Close"] < row["EMA10"]:
+        #     return False, "EMA10 touched"
 
         return False, None
 

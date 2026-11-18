@@ -17,7 +17,7 @@ CONFIG = {
     "MIN_DAYS": 252,
 
     # Exit
-    "PARTIAL_PROFIT": 1.10,
+    "PARTIAL_PROFIT": 1.15,
     "PARTIAL_SELL": 0.50,
     "TRAIL_INITIAL": 0.85,
     "TRAIL_AFTER_PARTIAL": 0.90,

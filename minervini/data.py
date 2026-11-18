@@ -132,6 +132,15 @@ def add_indicators(df):
 
         df = df.apply(pd.to_numeric, errors="coerce")
         df.dropna(inplace=True)
+        # Keep original index structure temporary for weekly resample
+        df_temp = df.copy()
+        # ===== WEEKLY SMA 20 CALCULATION =====
+        # Resample to weekly (W-FRI) using the close price, compute 20 SMA
+        weekly_close = df_temp["Close"].resample("W-FRI").last()
+        weekly_sma20 = weekly_close.rolling(window=20).mean()
+
+        # Reindex / map back to daily dataframe and forward fill
+        df["Weekly_SMA20"] = weekly_sma20.reindex(df.index, method="ffill")
 
         # ===== MOVING AVERAGES =====
         df["EMA10"] = df["Close"].ewm(span=10, adjust=False).mean()
@@ -141,6 +150,7 @@ def add_indicators(df):
         df["VOL_AVG20"] = df["Volume"].rolling(20).mean()
 
         df["SMA150"] = df["Close"].rolling(150).mean()
+        df["SMA20"] = df["Close"].rolling(20).mean()
 
         # ===== 52W HIGH =====
         df["52W_HIGH"] = df["Close"].rolling(252).max()
