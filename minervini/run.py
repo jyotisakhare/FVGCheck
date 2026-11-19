@@ -62,6 +62,7 @@ print("\nBEST:", best)
 # {'Return %': 33, 'Win Rate': 48, 'Expectancy': 5, 'avg win': 22, 'avg loss': -11, 'Max DD': -13, 'Trades': 126}
 # 200 EMA top 2 with max 20 trades
 #  {'Return %': 49, 'Win Rate': 57, 'Expectancy': 6, 'avg win': 19, 'avg loss': -10, 'Max DD': -11, 'Trades': 165}
+# 2.0 0.75 {'Return %': 138, 'Win Rate': 45, 'Expectancy': 19, 'avg win': 51, 'avg loss': -8, 'Max DD': -28, 'Trades': 158}
 
 # minervini
 # {'Return %': 38, 'Win Rate': 51, 'Expectancy': 5, 'avg win': 20, 'avg loss': -11, 'Max DD': -13, 'Trades': 229}
