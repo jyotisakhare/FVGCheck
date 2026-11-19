@@ -162,6 +162,8 @@ class Portfolio:
         # 2. Check if daily close is below the pre-calculated Weekly EMA 20
         if is_friday and row["Close"] < row["Weekly_SMA20"]:
             return True, "WEEKLY SMA20 EXIT"
+        else:
+            return False, ""
 
         # ===== HARD STOP =====
         if row["Close"] < pos["stop"]:
