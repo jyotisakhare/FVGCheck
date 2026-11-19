@@ -86,7 +86,7 @@ class Portfolio:
             return True, "WEEKLY SMA20 EXIT"
 
         # comment this false for backtesting
-        allow_other_exit = False
+        allow_other_exit = True
         if not allow_other_exit:
             return False, "OTHER EXIT"
 
