@@ -93,7 +93,12 @@ def fetch_symbol(symbol):
         df["EMA20"] = df["Close"].ewm(span=20).mean()
         df["EMA50"] = df["Close"].ewm(span=50).mean()
         df["SMA150"] = df["Close"].rolling(150).mean()
+        df_temp = df.copy()
+        weekly_close = df_temp["Close"].resample("W-FRI").last()
+        weekly_sma20 = weekly_close.rolling(window=20).mean()
 
+        # Reindex / map back to daily dataframe and forward fill
+        df["Weekly_SMA20"] = weekly_sma20.reindex(df.index, method="ffill")
         return df
     except e:
         print(f"fetch_symbol failed for {e}")
