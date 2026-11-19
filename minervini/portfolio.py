@@ -156,6 +156,9 @@ class Portfolio:
         current_date = row["Date"] if "Date" in row else row.name
         is_friday = pd.to_datetime(current_date).dayofweek == 4
 
+        # comment this false for backtesting
+        is_friday = True
+
         # 2. Check if daily close is below the pre-calculated Weekly EMA 20
         if is_friday and row["Close"] < row["Weekly_SMA20"]:
             return True, "WEEKLY SMA20 EXIT"
