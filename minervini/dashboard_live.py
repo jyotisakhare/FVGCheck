@@ -293,7 +293,10 @@ try:
     col11, col12, col13 = st.columns(3)
     col11.metric("Total Invested", total_invested_trade)
     col12.metric("Current Value", current_val_trade_team)
-    col13.metric("Profit", round(((current_val_trade_team - total_invested_trade) / total_invested_trade) * 100, 2))
+    try:
+        col13.metric("Profit", round(((current_val_trade_team - total_invested_trade) / total_invested_trade) * 100, 2))
+    except:
+        col13.metric("Profit", 0)
 
     st.dataframe(
         df_live_trade_team,
