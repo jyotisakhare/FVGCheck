@@ -216,17 +216,17 @@ try:
         distance_from_high = ((row["Close"] - highest_since_entry)/ highest_since_entry) * 100
         data = {
             "Symbol": symbol,
+            "Reason": exit_reason if exit_reason else "",
             "Day%": round(day_change, 2),
             "PnL %": round(pnl, 2),
-            "Partial": pos["partial"],
-            "Action": action,
             "Highest": round(distance_from_high, 2),
             # "Next Stop": round(next_stop, 2),
-            "Reason": exit_reason if exit_reason else "",
             "Days": days,
             "Invested": round(pos["entry"]*pos["shares"]),
             "Shares": pos["shares"],
             "Price": round(row["Close"], 2),
+            "Partial": pos["partial"],
+            "Action": action,
         }
 
         # =================================================

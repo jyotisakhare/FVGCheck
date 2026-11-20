@@ -83,7 +83,7 @@ class Portfolio:
 
         # 2. Check if daily close is below the pre-calculated Weekly EMA 20
         if is_friday and row["Close"] < row["Weekly_SMA20"]:
-            return True, "WEEKLY SMA20 EXIT"
+            return True, "WSMA20 hit"
 
         # comment this false for backtesting
         allow_other_exit = True
@@ -161,7 +161,7 @@ class Portfolio:
 
         # 2. Check if daily close is below the pre-calculated Weekly EMA 20
         if is_friday and row["Close"] < row["Weekly_SMA20"]:
-            return True, "WEEKLY SMA20 EXIT"
+            return True, "WSMA20 hit"
         else:
             return False, ""
 
