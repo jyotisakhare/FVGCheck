@@ -228,7 +228,7 @@ try:
             "Price": round(row["Close"], 2),
             "Partial": pos["partial"],
             "Action": action,
-            "CMO": chande_momentum_oscillator(pd.Series(row["Close"])),
+            "CMO": chande_momentum_oscillator(pd.Series(row["Close"],0)),
         }
 
         # =================================================
