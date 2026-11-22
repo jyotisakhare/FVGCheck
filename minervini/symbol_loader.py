@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import yfinance as yf
 import os
@@ -103,3 +104,16 @@ def fetch_symbol(symbol):
     except e:
         print(f"fetch_symbol failed for {e}")
         return None
+
+def chande_momentum_oscillator(close: pd.Series, period: int = 10) -> float:
+    # Only the last (period + 1) prices are needed for the latest CMO value
+    recent = np.asarray(close[-(period + 1):], dtype=float)
+    if len(recent) < period + 1:
+        raise ValueError(f"Need at least {period + 1} prices, got {len(recent)}")
+
+    diff = np.diff(recent)
+    sum_up = diff[diff > 0].sum()
+    sum_down = -diff[diff < 0].sum()
+
+    total = sum_up + sum_down
+    return 0.0 if total == 0 else round(float(100.0 * (sum_up - sum_down) / total),0)
