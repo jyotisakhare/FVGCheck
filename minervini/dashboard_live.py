@@ -228,7 +228,7 @@ try:
             "Price": round(row["Close"], 2),
             "Partial": pos["partial"],
             "Action": action,
-            "CMO": round(latest_cmo(df["Close"]), 0),
+            "CMO": round(latest_cmo(df["Weekly_SMA20"]), 0),
         }
 
         # =================================================
