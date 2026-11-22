@@ -148,7 +148,7 @@ def fetch_candidates(symbols) :
                 "Volume": int(df["Volume"].iloc[-1]),
                 "RS": round(df["RS"].iloc[-1], 3),
                 "Marketcap": fetch_market_cap(symbol),
-                "CMO":round(df["Weekly_CMO"])
+                "CMO":round(df["Weekly_CMO"].iloc[-1])
             })
         progress.progress((row + 1) / len(symbols))
         row = row + 1
