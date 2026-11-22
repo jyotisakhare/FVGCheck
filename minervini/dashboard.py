@@ -111,6 +111,16 @@ def add_indicators(df):
     df["52W_HIGH"] = df["Close"].rolling(252).max()
     df["VOL_AVG20"] = df["Volume"].rolling(20).mean()
 
+    # Clean weekly close series (drop any empty weeks)
+    weekly_close = df["Close"].resample("W-FRI").last().dropna()
+
+    # Calculate Weekly CMO directly on the clean weekly series (no duplicate days)
+    df["Weekly_CMO"] = (
+        round(latest_cmo(weekly_close, period=10), 0)
+        if len(weekly_close) >= 9
+        else 0.0
+    )
+
     return df
 
 # =========== fetch symbols candidates =========
@@ -138,6 +148,7 @@ def fetch_candidates(symbols) :
                 "Volume": int(df["Volume"].iloc[-1]),
                 "RS": round(df["RS"].iloc[-1], 3),
                 "Marketcap": fetch_market_cap(symbol),
+                "CMO":round(df["Weekly_CMO"])
             })
         progress.progress((row + 1) / len(symbols))
         row = row + 1
@@ -167,6 +178,7 @@ def fetch_vcp_candidates(symbols) :
                 "Volume": int(df["Volume"].iloc[-1]),
                 "RS": round(df["RS"].iloc[-1], 3),
                 "Marketcap": fetch_market_cap(symbol),
+                "CMO": round(df["Weekly_CMO"])
             })
         progress.progress((row + 1) / len(symbols))
         row = row + 1
@@ -196,6 +208,7 @@ def fetch_200_ema_candidates(symbols) :
                 "Volume": int(df["Volume"].iloc[-1]),
                 "RS": round(df["RS"].iloc[-1], 3),
                 "Marketcap": fetch_market_cap(symbol),
+                "CMO": round(df["Weekly_CMO"])
             })
         progress.progress((row + 1) / len(symbols))
         row = row + 1
