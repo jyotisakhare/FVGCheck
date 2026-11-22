@@ -4,7 +4,7 @@ import time
 import sys
 
 from config import CONFIG
-from symbol_loader import chande_momentum_oscillator
+from symbol_loader import latest_cmo
 from sheetutils import connect_google_sheets, read_sheet
 from symbol_loader import fetch_symbol
 from portfolio import Portfolio
@@ -228,7 +228,7 @@ try:
             "Price": round(row["Close"], 2),
             "Partial": pos["partial"],
             "Action": action,
-            "CMO": chande_momentum_oscillator(pd.Series(row["Close"],),0),
+            "CMO": latest_cmo(row["Close"]),
         }
 
         # =================================================
