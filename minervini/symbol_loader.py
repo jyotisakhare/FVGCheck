@@ -95,12 +95,18 @@ def fetch_symbol(symbol):
         df["EMA50"] = df["Close"].ewm(span=50).mean()
         df["SMA150"] = df["Close"].rolling(150).mean()
         df_temp = df.copy()
-        weekly_close = df_temp["Close"].resample("W-FRI").last()
+        # Clean weekly close series (drop any empty weeks)
+        weekly_close = df["Close"].resample("W-FRI").last().dropna()
         weekly_sma20 = weekly_close.rolling(window=20).mean()
 
         # Reindex / map back to daily dataframe and forward fill
         df["Weekly_SMA20"] = weekly_sma20.reindex(df.index, method="ffill")
-        df["weekly_close"] = weekly_close
+        # Calculate Weekly CMO directly on the clean weekly series (no duplicate days)
+        df["Weekly_CMO"] = (
+            round(latest_cmo(weekly_close, period=10), 0)
+            if len(weekly_close) >= 9
+            else 0.0
+        )
         return df
     except e:
         print(f"fetch_symbol failed for {e}")
