@@ -118,7 +118,7 @@ def chande_momentum_oscillator(close: pd.Series, period: int = 10) -> float:
     total = sum_up + sum_down
     return 0.0 if total == 0 else round(float(100.0 * (sum_up - sum_down) / total),0)
 
-def latest_cmo(close, period: int = 14) -> float:
+def latest_cmo(close, period: int = 10) -> float:
     # Only the last (period + 1) prices are needed for the latest CMO value
     recent = np.asarray(close[-(period + 1) :], dtype=float)
     if len(recent) < period + 1:
