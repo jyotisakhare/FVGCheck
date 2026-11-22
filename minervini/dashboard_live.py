@@ -255,6 +255,8 @@ try:
         total_invested_trade = total_invested_trade + result["Invested"]
         current_val_trade_team = round(current_val_trade_team + (result["Price"] * result["Shares"]), 2)
 
+    final_invested = total_invested + total_invested_trade
+    final_current_val = current_val + current_val_trade_team
 
     # =====================================================
     # SORT RESULTS
@@ -281,6 +283,10 @@ try:
     # =====================================================
     # DISPLAY
     # =====================================================
+    col01, col02, col03 = st.columns(3)
+    col01.metric("Final Invested", final_invested)
+    col02.metric("Final Current", final_current_val)
+    col03.metric("Profit", round(((final_current_val - final_invested) / final_invested) * 100, 2))
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Invested", total_invested)
