@@ -100,6 +100,7 @@ def fetch_symbol(symbol):
 
         # Reindex / map back to daily dataframe and forward fill
         df["Weekly_SMA20"] = weekly_sma20.reindex(df.index, method="ffill")
+        df["weekly_close"] = weekly_close
         return df
     except e:
         print(f"fetch_symbol failed for {e}")
