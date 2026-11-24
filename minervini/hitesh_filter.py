@@ -3,12 +3,27 @@ import datetime
 import pandas as pd
 import yfinance as yf
 from pathlib import Path
+import numpy as np
 
 # nifty500.csv
 # nasdaq.csv
-def load_symbols(filename = "nasdaq.csv"):
+# snp.csv
+def load_symbols(filename = "test.csv"):
     df = pd.read_csv(filename)
     return df["Symbol"].dropna().unique().tolist()
+
+def chande_momentum_oscillator(close: pd.Series, period: int = 10) -> float:
+    # Only the last (period + 1) prices are needed for the latest CMO value
+    recent = np.asarray(close[-(period + 1):], dtype=float)
+    if len(recent) < period + 1:
+        raise ValueError(f"Need at least {period + 1} prices, got {len(recent)}")
+
+    diff = np.diff(recent)
+    sum_up = diff[diff > 0].sum()
+    sum_down = -diff[diff < 0].sum()
+
+    total = sum_up + sum_down
+    return 0.0 if total == 0 else round(float(100.0 * (sum_up - sum_down) / total),0)
 
 def scan_weekly_momentum(symbol):
     print(f"Scanning Weekly Momentum {symbol}")
@@ -138,6 +153,7 @@ def scan_weekly_momentum(symbol):
             "Avg Weekly Vol": int(avg_vol),
             "Prior 52W Closing High": round(prior_closing_high, 2),
             "Market Cap (INR Cr)": round(market_cap_cr, 2),
+            "CMO": chande_momentum_oscillator(df_weekly["Close"])
         }
 
     except Exception as e:
